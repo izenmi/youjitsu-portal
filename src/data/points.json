@@ -1,0 +1,39 @@
+{
+  "note": "クラスポイントは入学時クラス(綾小路の学年)基準の4系列。数値はファンコミュニティの検証値を基にした概算で、作中で明示されない期間は前値を維持しています。",
+  "series": [
+    { "key": "sakayanagi", "label": "坂柳クラス(1年A組)", "color": "var(--class-a)" },
+    { "key": "ichinose", "label": "一之瀬クラス(1年B組)", "color": "var(--class-b)" },
+    { "key": "ryuen", "label": "龍園クラス(1年C組)", "color": "var(--class-c)" },
+    { "key": "horikita", "label": "堀北クラス(1年D組)", "color": "var(--class-d)" }
+  ],
+  "points": [
+    { "ord": 0, "label": "入学時", "sakayanagi": 1000, "ichinose": 1000, "ryuen": 1000, "horikita": 1000 },
+    { "ord": 1, "label": "1年5月", "sakayanagi": 940, "ichinose": 650, "ryuen": 490, "horikita": 0,
+      "event": "入学1ヶ月で明暗。D組は生活態度が災いしクラスポイント0に" },
+    { "ord": 2, "label": "1年7月", "sakayanagi": 1004, "ichinose": 663, "ryuen": 492, "horikita": 87,
+      "event": "中間テストを全員で乗り切りD組が再起動" },
+    { "ord": 4, "label": "1年9月", "sakayanagi": 924, "ichinose": 803, "ryuen": 642, "horikita": 362,
+      "event": "無人島試験1位+干支試験でD組が大躍進" },
+    { "ord": 6, "label": "1年10月", "sakayanagi": 874, "ichinose": 753, "ryuen": 542, "horikita": 262,
+      "event": "体育祭。情報戦に敗れたD組は後退" },
+    { "ord": 7, "label": "1年12月", "sakayanagi": 874, "ichinose": 753, "ryuen": 542, "horikita": 362,
+      "event": "ペーパーシャッフルを凌ぎ切り持ち直す" },
+    { "ord": 12, "label": "1年2月", "sakayanagi": 1001, "ichinose": 640, "ryuen": 318, "horikita": 377,
+      "event": "クラス内投票の代償が各クラスを直撃。旧D組が龍園クラスを逆転しCクラスへ" },
+    { "ord": 14, "label": "1年3月", "sakayanagi": 1001, "ichinose": 640, "ryuen": 318, "horikita": 377,
+      "event": "1年生編完結。堀北クラスはCクラスで2年目へ" },
+    { "ord": 15, "label": "2年4月", "sakayanagi": 1119, "ichinose": 542, "ryuen": 540, "horikita": 275,
+      "event": "進級時の再計算で堀北クラスは再びDクラス相当からの出発に" },
+    { "ord": 16, "label": "2年5月", "sakayanagi": 1169, "ichinose": 539, "ryuen": 565, "horikita": 283,
+      "event": "1・2年ペア試験の余波。OAA導入で全生徒の実力が可視化" },
+    { "ord": 18, "label": "2年8月", "sakayanagi": 1206, "ichinose": 578, "ryuen": 551, "horikita": 571,
+      "event": "2週間の無人島試験。堀北クラスが猛追" },
+    { "ord": 22, "label": "2年11月", "sakayanagi": 1101, "ichinose": 625, "ryuen": 640, "horikita": 866,
+      "event": "満場一致・体育祭・文化祭を経て堀北クラスがBクラス浮上" },
+    { "ord": 24, "label": "2年12月", "sakayanagi": 1250, "ichinose": 655, "ryuen": 684, "horikita": 985,
+      "event": "協力型筆記テスト。首位・坂柳クラスとの一騎打ちの様相に" },
+    { "ord": 29, "label": "2年3月", "sakayanagi": 1098, "ichinose": 654, "ryuen": 730, "horikita": 983,
+      "event": "学年末試験の激突を経て2年生編完結。堀北クラスはAクラスの座へ" }
+  ],
+  "future_note": "3年生編(1〜4巻)のクラスポイント推移は、確定情報の裏取りが済み次第追加予定です。"
+}

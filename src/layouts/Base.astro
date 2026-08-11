@@ -1,0 +1,298 @@
+---
+import '../styles/global.css';
+import timeline from '../data/timeline.json';
+
+interface Props {
+  title?: string;
+  description?: string;
+}
+
+const { title, description = '「ようこそ実力至上主義の教室へ」非公式ファンサイト。OAA風キャラ名鑑・特別試験アーカイブ・クラスポイント推移・診断とクイズ。' } = Astro.props;
+const pageTitle = title ? `${title} | 高育ポータル` : '高育ポータル - よう実ファンサイト';
+const base = import.meta.env.BASE_URL;
+
+const nav = [
+  { href: `${base}students/`, label: '生徒名鑑' },
+  { href: `${base}exams/`, label: '特別試験' },
+  { href: `${base}points/`, label: 'クラスポイント' },
+  { href: `${base}quiz/`, label: 'クイズ' },
+  { href: `${base}shindan/`, label: '適性診断' },
+  { href: `${base}about/`, label: 'について' },
+];
+---
+
+<html lang="ja">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{pageTitle}</title>
+    <meta name="description" content={description} />
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content="website" />
+    <link rel="icon" type="image/svg+xml" href={`${base}favicon.svg`} />
+    <script is:inline>
+      // ネタバレ処理が終わるまで sp 対象を隠す(フラッシュ防止)
+      document.documentElement.classList.add('sp-pending');
+    </script>
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="container header-inner">
+        <a class="brand" href={base}>
+          <span class="brand-mark">高育</span>
+          <span class="brand-text">
+            <strong>学内ポータル</strong>
+            <small>ようこそ実力至上主義の教室へ 非公式ファンサイト</small>
+          </span>
+        </a>
+        <nav class="site-nav">
+          {nav.map((n) => <a href={n.href}>{n.label}</a>)}
+        </nav>
+        <button id="sp-btn" class="sp-btn" type="button" title="ネタバレ表示範囲を変更">
+          📖 <span id="sp-btn-label">未設定</span>
+        </button>
+      </div>
+    </header>
+
+    <main class="container">
+      <slot />
+    </main>
+
+    <footer class="site-footer">
+      <div class="container">
+        <p>
+          当サイトは『ようこそ実力至上主義の教室へ』(衣笠彰梧・KADOKAWA/MF文庫J)の<strong>非公式ファンサイト</strong>です。
+          原作の権利者とは一切関係ありません。掲載イラストはすべて管理人による自作です。
+        </p>
+        <p><a href={`${base}about/`}>このサイトについて</a></p>
+      </div>
+    </footer>
+
+    <dialog id="sp-dialog" class="sp-dialog">
+      <form method="dialog">
+        <h2>📖 どこまで読みましたか?</h2>
+        <p class="muted">選んだ位置より先の情報(試験結果・退学者・関係の変化など)は自動でネタバレ防止されます。設定はこの端末にのみ保存されます。</p>
+        <div class="sp-presets">
+          {timeline.presets.map((p) => (
+            <button type="button" class="sp-preset" data-ord={p.ord}>{p.label}</button>
+          ))}
+        </div>
+        <label class="sp-vol-label">
+          巻数で細かく指定:
+          <select id="sp-vol-select">
+            <option value="0">未読</option>
+            {timeline.volumes.map((v) => (
+              <option value={v.ord}>{v.label}まで読了</option>
+            ))}
+          </select>
+        </label>
+        <div class="sp-actions">
+          <button type="submit" id="sp-save" class="sp-save">この設定で見る</button>
+        </div>
+      </form>
+    </dialog>
+
+    <script is:inline define:vars={{ volumes: timeline.volumes, presets: timeline.presets }}>
+      (() => {
+        const KEY = 'anhs-progress';
+        const labelOf = (ord) => {
+          if (ord >= 999) return '全部OK';
+          if (ord <= 0) return 'ネタバレ完全回避';
+          const v = volumes.find((x) => x.ord === ord);
+          return v ? `${v.label}まで` : `序数${ord}まで`;
+        };
+        const spLabelOf = (ord) => {
+          const v = volumes.find((x) => x.ord === ord);
+          return v ? v.label : '未読範囲';
+        };
+
+        const stored = localStorage.getItem(KEY);
+        let progress = stored === null ? 0 : Number(stored);
+        window.ANHS = { get progress() { return progress; } };
+
+        const apply = () => {
+          document.querySelectorAll('[data-sp]').forEach((el) => {
+            const sp = Number(el.dataset.sp);
+            const locked = sp > progress;
+            if (el.hasAttribute('data-sp-hide')) {
+              el.classList.toggle('sp-hidden', locked);
+            } else {
+              if (locked && !el.dataset.spLabel) el.dataset.spLabel = spLabelOf(sp);
+              el.classList.toggle('sp-locked', locked && el.dataset.spOpen !== '1');
+            }
+          });
+          document.querySelectorAll('[data-sp-count]').forEach((box) => {
+            const n = box.querySelectorAll('.sp-hidden').length;
+            const note = box.querySelector('.sp-note');
+            if (note) {
+              note.textContent = n > 0 ? `🔒 読了位置より先の ${n} 件を非表示にしています(右上の📖から変更できます)` : '';
+              note.style.display = n > 0 ? '' : 'none';
+            }
+          });
+          const btnLabel = document.getElementById('sp-btn-label');
+          if (btnLabel) btnLabel.textContent = labelOf(progress);
+          document.documentElement.classList.remove('sp-pending');
+          document.dispatchEvent(new CustomEvent('anhs:progress', { detail: { progress } }));
+        };
+
+        // 個別開示(ロック部分をタップ)
+        document.addEventListener('click', (e) => {
+          const locked = e.target.closest('.sp-locked');
+          if (locked) {
+            locked.dataset.spOpen = '1';
+            locked.classList.remove('sp-locked');
+            e.preventDefault();
+          }
+        });
+
+        const dialog = document.getElementById('sp-dialog');
+        const select = document.getElementById('sp-vol-select');
+        document.getElementById('sp-btn').addEventListener('click', () => {
+          select.value = String(Math.min(progress, 33));
+          dialog.showModal();
+        });
+        dialog.querySelectorAll('.sp-preset').forEach((b) => {
+          b.addEventListener('click', () => {
+            progress = Number(b.dataset.ord);
+            localStorage.setItem(KEY, String(progress));
+            dialog.close();
+            apply();
+          });
+        });
+        dialog.addEventListener('close', () => apply());
+        document.getElementById('sp-save').addEventListener('click', () => {
+          progress = Number(select.value);
+          localStorage.setItem(KEY, String(progress));
+        });
+
+        if (stored === null) {
+          // 初回訪問: まず選んでもらう
+          window.addEventListener('DOMContentLoaded', () => dialog.showModal());
+        }
+        window.addEventListener('DOMContentLoaded', apply);
+      })();
+    </script>
+
+    <style is:global>
+      html.sp-pending [data-sp] { visibility: hidden; }
+
+      .site-header {
+        background: var(--navy);
+        color: var(--navy-ink);
+        position: sticky;
+        top: 0;
+        z-index: 10;
+        box-shadow: var(--shadow);
+      }
+      .header-inner {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        flex-wrap: wrap;
+        padding-top: 10px;
+        padding-bottom: 10px;
+      }
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        text-decoration: none;
+      }
+      .brand-mark {
+        display: grid;
+        place-items: center;
+        width: 42px;
+        height: 42px;
+        border-radius: 10px;
+        background: var(--accent);
+        color: var(--accent-ink);
+        font-weight: 800;
+        font-size: 0.95rem;
+        letter-spacing: 0.05em;
+      }
+      .brand-text { display: flex; flex-direction: column; line-height: 1.25; }
+      .brand-text strong { font-size: 1.05rem; }
+      .brand-text small { font-size: 0.68rem; opacity: 0.75; }
+      .site-nav {
+        display: flex;
+        gap: 2px;
+        flex-wrap: wrap;
+        margin-left: auto;
+      }
+      .site-nav a {
+        text-decoration: none;
+        padding: 6px 10px;
+        border-radius: 8px;
+        font-size: 0.9rem;
+      }
+      .site-nav a:hover { background: rgb(255 255 255 / 0.12); }
+      .sp-btn {
+        border: 1px solid rgb(255 255 255 / 0.3);
+        background: rgb(255 255 255 / 0.08);
+        color: var(--navy-ink);
+        border-radius: 999px;
+        padding: 5px 12px;
+        font-size: 0.82rem;
+        cursor: pointer;
+      }
+      .sp-btn:hover { background: rgb(255 255 255 / 0.16); }
+
+      main.container { padding-top: 20px; padding-bottom: 48px; min-height: 60vh; }
+
+      .site-footer {
+        border-top: 1px solid var(--line);
+        background: var(--surface);
+        padding: 20px 0 28px;
+        font-size: 0.8rem;
+        color: var(--ink-2);
+      }
+
+      .sp-dialog {
+        border: none;
+        border-radius: var(--radius);
+        max-width: 480px;
+        width: calc(100vw - 40px);
+        padding: 22px;
+        background: var(--surface);
+        color: var(--ink);
+        box-shadow: 0 10px 40px rgb(0 0 0 / 0.35);
+      }
+      .sp-dialog::backdrop { background: rgb(10 14 22 / 0.6); }
+      .sp-dialog h2 { margin: 0 0 6px; font-size: 1.15rem; }
+      .sp-presets { display: grid; gap: 8px; margin: 14px 0; }
+      .sp-preset {
+        text-align: left;
+        padding: 9px 12px;
+        border-radius: 8px;
+        border: 1px solid var(--line);
+        background: var(--surface-2);
+        color: var(--ink);
+        cursor: pointer;
+        font-size: 0.9rem;
+      }
+      .sp-preset:hover { border-color: var(--accent); }
+      .sp-vol-label { font-size: 0.85rem; display: block; margin: 12px 0; }
+      .sp-vol-label select {
+        width: 100%;
+        margin-top: 4px;
+        padding: 7px;
+        border-radius: 8px;
+        border: 1px solid var(--line);
+        background: var(--surface);
+        color: var(--ink);
+        font-size: 0.9rem;
+      }
+      .sp-actions { display: flex; justify-content: flex-end; }
+      .sp-save {
+        background: var(--accent);
+        color: var(--accent-ink);
+        border: none;
+        border-radius: 8px;
+        padding: 9px 18px;
+        font-weight: 700;
+        cursor: pointer;
+      }
+    </style>
+  </body>
+</html>

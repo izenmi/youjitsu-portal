@@ -1,0 +1,190 @@
+/* ===== 高度育成高等学校 学内ポータル デザイントークン ===== */
+:root {
+  /* 基調色 */
+  --bg: #f2f4f8;
+  --surface: #ffffff;
+  --surface-2: #e9edf3;
+  --ink: #1b2a4a;
+  --ink-2: #52617e;
+  --line: #d4dae4;
+  /* アクセント: 制服の深紅 */
+  --accent: #b3223c;
+  --accent-ink: #ffffff;
+  --accent-soft: #f7e3e7;
+  /* ネイビー(ヘッダー等) */
+  --navy: #1b2a4a;
+  --navy-ink: #eef2f8;
+  /* クラスカラー(入学時クラス基準) */
+  --class-a: #8b5cf6;
+  --class-b: #2f86d6;
+  --class-c: #d97706;
+  --class-d: #c22843;
+  --class-t: #64748b; /* 教職員・その他 */
+  /* ランクバッジ */
+  --rank-a: #b78a1e;
+  --rank-b: #2f6fbf;
+  --rank-c: #2e8b57;
+  --rank-d: #c07a1a;
+  --rank-e: #8a94a3;
+  /* ネタバレマスク */
+  --mask-bg: #aeb6c2;
+  --radius: 12px;
+  --shadow: 0 1px 3px rgb(27 42 74 / 0.10), 0 4px 14px rgb(27 42 74 / 0.06);
+}
+
+:root:not([data-theme="light"]) {
+  @media (prefers-color-scheme: dark) {
+    --bg: #10151f;
+    --surface: #1a2130;
+    --surface-2: #242d40;
+    --ink: #e3e9f2;
+    --ink-2: #9aa7bd;
+    --line: #303b52;
+    --accent: #e04a63;
+    --accent-soft: #3a2029;
+    --navy: #141c2c;
+    --navy-ink: #e3e9f2;
+    --mask-bg: #465061;
+    --shadow: 0 1px 3px rgb(0 0 0 / 0.4);
+  }
+}
+
+* { box-sizing: border-box; }
+
+html {
+  color-scheme: light dark;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: "Hiragino Kaku Gothic ProN", "Hiragino Sans", "BIZ UDPGothic", Meiryo, system-ui, sans-serif;
+  line-height: 1.7;
+  -webkit-font-smoothing: antialiased;
+}
+
+a { color: inherit; }
+img, svg { max-width: 100%; height: auto; }
+
+.container {
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 0 16px;
+}
+
+/* ===== 共通コンポーネント ===== */
+.card {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+}
+
+.section-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 1.25rem;
+  margin: 2.2rem 0 1rem;
+}
+.section-title::before {
+  content: "";
+  width: 6px;
+  height: 1.35em;
+  border-radius: 3px;
+  background: var(--accent);
+}
+
+/* ランクバッジ (A+〜E-) */
+.rank {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 2.4em;
+  padding: 0.05em 0.45em;
+  border-radius: 6px;
+  font-weight: 700;
+  font-size: 0.85em;
+  color: #fff;
+  letter-spacing: 0.02em;
+}
+.rank[data-rank^="A"] { background: var(--rank-a); }
+.rank[data-rank^="B"] { background: var(--rank-b); }
+.rank[data-rank^="C"] { background: var(--rank-c); }
+.rank[data-rank^="D"] { background: var(--rank-d); }
+.rank[data-rank^="E"] { background: var(--rank-e); }
+
+/* クラスチップ */
+.class-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35em;
+  padding: 0.1em 0.6em;
+  border-radius: 999px;
+  font-size: 0.8em;
+  font-weight: 700;
+  color: #fff;
+  background: var(--class-t);
+}
+.class-chip[data-class="A"] { background: var(--class-a); }
+.class-chip[data-class="B"] { background: var(--class-b); }
+.class-chip[data-class="C"] { background: var(--class-c); }
+.class-chip[data-class="D"] { background: var(--class-d); }
+
+/* 推定値マーク */
+.estimated {
+  font-size: 0.72em;
+  color: var(--ink-2);
+  vertical-align: super;
+}
+
+/* ===== ネタバレ制御 ===== */
+/* data-sp: その要素が確定するタイムライン序数。閲覧者の読了位置より先ならロック */
+.sp-locked {
+  position: relative;
+  overflow: hidden;
+  border-radius: 8px;
+}
+.sp-locked > * {
+  filter: blur(9px);
+  pointer-events: none;
+  user-select: none;
+}
+.sp-locked::after {
+  content: "🔒 " attr(data-sp-label) "のネタバレ(タップで表示)";
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--ink);
+  background: color-mix(in srgb, var(--mask-bg) 55%, transparent);
+  cursor: pointer;
+  text-align: center;
+  padding: 4px;
+}
+/* 一覧アイテム丸ごと非表示用 */
+.sp-hidden { display: none !important; }
+
+.sp-note {
+  font-size: 0.82rem;
+  color: var(--ink-2);
+  background: var(--surface-2);
+  border-radius: 8px;
+  padding: 6px 12px;
+  margin: 8px 0;
+}
+
+/* ===== ユーティリティ ===== */
+.muted { color: var(--ink-2); }
+.grid {
+  display: grid;
+  gap: 14px;
+}
+@media (min-width: 640px) {
+  .grid-2 { grid-template-columns: 1fr 1fr; }
+  .grid-3 { grid-template-columns: repeat(3, 1fr); }
+}
