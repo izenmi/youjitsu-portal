@@ -6,7 +6,7 @@ interface Props {
 }
 const { values, size = 220 } = Astro.props;
 
-const cx = 110, cy = 105, r = 72;
+const cx = 150, cy = 105, r = 72;
 // 上・右・下・左の4軸
 const angle = (i: number) => (Math.PI / 2) * i - Math.PI / 2;
 const pt = (i: number, ratio: number) =>
@@ -22,7 +22,7 @@ const labelPos = [
 ];
 ---
 
-<svg viewBox="0 0 220 210" width={size} role="img" aria-label="OAA能力チャート" class="radar">
+<svg viewBox="0 0 300 210" width={size * 1.36} role="img" aria-label="OAA能力チャート" class="radar">
   {[0.25, 0.5, 0.75, 1].map((ratio) => (
     <polygon points={ring(ratio)} fill="none" stroke="var(--line)" stroke-width={ratio === 1 ? 1.6 : 1} />
   ))}

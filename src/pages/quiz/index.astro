@@ -135,7 +135,6 @@ import quiz from '../../data/quiz.json';
   </script>
 
   <style is:global>
-    .panel { padding: 20px; margin-top: 14px; }
     .level-btns { display: grid; gap: 10px; grid-template-columns: repeat(3, 1fr); }
     .level-btn {
       padding: 14px 8px; border-radius: 10px; border: 1px solid var(--line);
@@ -145,27 +144,7 @@ import quiz from '../../data/quiz.json';
     .level-btn small { font-weight: 400; font-size: 0.72rem; color: var(--ink-2); }
     .level-btn:hover:not(:disabled) { border-color: var(--accent); }
     .level-btn:disabled { opacity: 0.45; cursor: not-allowed; }
-    .choices { display: grid; gap: 8px; margin: 14px 0; }
-    .choice-btn {
-      text-align: left; padding: 11px 14px; border-radius: 9px;
-      border: 1px solid var(--line); background: var(--surface-2); color: var(--ink);
-      font-size: 0.95rem; cursor: pointer;
-    }
-    .choice-btn:hover:not(:disabled) { border-color: var(--accent); }
-    .choice-btn.correct { border-color: #2e8b57; background: color-mix(in srgb, #2e8b57 16%, var(--surface-2)); }
-    .choice-btn.wrong { border-color: var(--accent); background: var(--accent-soft); }
-    .progress-line { display: flex; justify-content: space-between; font-size: 0.85rem; font-weight: 700; }
-    .primary-btn {
-      background: var(--accent); color: var(--accent-ink); border: none;
-      border-radius: 8px; padding: 10px 20px; font-weight: 700; cursor: pointer; font-size: 0.95rem;
-    }
     .verdict { display: flex; gap: 16px; align-items: center; margin: 14px 0; }
     .verdict-rank { font-size: 2rem; min-width: 1.9em; padding: 0.15em 0.3em; }
-    .end-actions { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
-    .share-btn {
-      display: inline-block; border: 1px solid var(--line); border-radius: 8px;
-      padding: 9px 16px; text-decoration: none; font-size: 0.9rem; font-weight: 700;
-    }
-    .share-btn:hover { border-color: var(--accent); }
   </style>
 </Base>
