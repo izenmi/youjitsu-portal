@@ -1,0 +1,90 @@
+---
+import Base from '../../layouts/Base.astro';
+import Portrait from '../../components/Portrait.astro';
+import exams from '../../data/exams.json';
+import students from '../../data/students.json';
+import timeline from '../../data/timeline.json';
+
+export function getStaticPaths() {
+  return exams.map((e) => ({ params: { id: e.id } }));
+}
+
+const base = import.meta.env.BASE_URL;
+const { id } = Astro.params;
+const e = exams.find((x) => x.id === id)!;
+const chars = e.chars
+  .map((cid) => students.students.find((s) => s.id === cid))
+  .filter(Boolean);
+const spLabel = (sp: number) => timeline.volumes.find((v) => v.ord === sp)?.label ?? '';
+---
+
+<Base title={e.name} description={`${e.arc}${e.vol}巻「${e.name}」のルールと結果。`}>
+  <nav class="crumbs muted"><a href={`${base}exams/`}>特別試験アーカイブ</a> / {e.name}</nav>
+
+  <div class="card exam-detail" data-sp={e.sp > 1 ? e.sp : undefined} data-sp-label={spLabel(e.sp)}>
+    <div class="head">
+      <h1>{e.name}</h1>
+      <p class="tags">
+        <span class="vol-tag">{e.arc}{e.vol}巻</span>
+        <span class="type-tag">{e.type}</span>
+        <span class="muted">{e.season}</span>
+      </p>
+    </div>
+    <h2 class="section-title">ルール</h2>
+    <p>{e.rule}</p>
+  </div>
+
+  <section>
+    <h2 class="section-title">結果・顛末<small class="muted">(読了位置に応じて表示)</small></h2>
+    <div data-sp-count>
+      <p class="sp-note"></p>
+      {e.result.map((r) => (
+        <div class="card result-item" data-sp={r.sp} data-sp-label={spLabel(r.sp)}>
+          <p>{r.text}</p>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  {chars.length > 0 && (
+    <section>
+      <h2 class="section-title">キーパーソン</h2>
+      <div class="char-row">
+        {chars.map((s) => (
+          <a
+            href={`${base}students/${s!.id}/`}
+            class="char-chip card"
+            data-sp={s!.sp > 1 ? s!.sp : undefined}
+            data-sp-hide={s!.sp > 1 ? '' : undefined}
+          >
+            <Portrait id={s!.portrait ? s!.id : `sil-${s!.id}`} size={44} classKey={s!.class} />
+            <span>{s!.name}</span>
+          </a>
+        ))}
+      </div>
+    </section>
+  )}
+
+  <style>
+    .crumbs { font-size: 0.85rem; margin-bottom: 12px; }
+    .exam-detail { padding: 20px; }
+    .exam-detail h1 { margin: 0 0 8px; font-size: 1.4rem; }
+    .tags { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin: 0; }
+    .vol-tag {
+      background: var(--navy); color: var(--navy-ink);
+      font-size: 0.78rem; font-weight: 700; border-radius: 999px; padding: 3px 10px;
+    }
+    .type-tag {
+      font-size: 0.78rem; font-weight: 700;
+      background: var(--accent-soft); color: var(--accent);
+      border-radius: 6px; padding: 2px 8px;
+    }
+    .result-item { padding: 4px 18px; margin-bottom: 10px; border-left: 4px solid var(--accent); }
+    .char-row { display: flex; flex-wrap: wrap; gap: 8px; }
+    .char-chip {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 6px 12px 6px 6px; text-decoration: none; font-size: 0.88rem;
+    }
+    .char-chip:hover { border-color: var(--accent); }
+  </style>
+</Base>

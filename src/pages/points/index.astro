@@ -1,0 +1,128 @@
+---
+import Base from '../../layouts/Base.astro';
+import points from '../../data/points.json';
+import timeline from '../../data/timeline.json';
+
+const spLabel = (sp: number) => timeline.volumes.find((v) => v.ord === sp)?.label ?? '入学時';
+---
+
+<Base title="クラスポイント推移" description="A〜Dクラスのクラスポイント変動を折れ線グラフで辿る。読了位置より先は自動でマスク。">
+  <h1>📈 クラスポイント推移</h1>
+  <p class="muted">
+    入学時クラス基準の4系列。数値はファンコミュニティの検証値を基にした概算です。
+    読了位置(右上📖)より先の推移は「???」でマスクされます。
+  </p>
+
+  <div class="card chart-card">
+    <div id="legend" class="legend"></div>
+    <svg id="chart" viewBox="0 0 760 420" role="img" aria-label="クラスポイント推移グラフ"></svg>
+    <p id="chart-empty" class="muted" hidden>表示できる期間がありません。右上の📖から読了位置を設定してください。</p>
+  </div>
+
+  <section>
+    <h2 class="section-title">主な変動イベント</h2>
+    <div data-sp-count>
+      <p class="sp-note"></p>
+      <ul class="events">
+        {points.points.filter((p) => 'event' in p && p.event).map((p) => (
+          <li class="card event-item" data-sp={p.ord > 1 ? p.ord : undefined} data-sp-label={spLabel(p.ord)}>
+            <span class="event-vol">{p.label}</span>
+            <span>{p.event}</span>
+          </li>
+        ))}
+      </ul>
+    </div>
+    <p class="muted" style="font-size: 0.82rem;">{points.future_note}</p>
+  </section>
+
+  <script is:inline define:vars={{ data: points }}>
+    const svg = document.getElementById('chart');
+    const legend = document.getElementById('legend');
+    const empty = document.getElementById('chart-empty');
+    const NS = 'http://www.w3.org/2000/svg';
+    const W = 760, H = 420, L = 52, R = 16, T = 18, B = 44;
+    const MAXY = 1300;
+
+    const el = (tag, attrs, parent) => {
+      const n = document.createElementNS(NS, tag);
+      for (const [k, v] of Object.entries(attrs)) n.setAttribute(k, v);
+      (parent ?? svg).appendChild(n);
+      return n;
+    };
+
+    legend.innerHTML = data.series
+      .map((s) => `<span class="legend-item"><i style="background:${s.color}"></i>${s.label}</span>`)
+      .join('');
+
+    const draw = () => {
+      const progress = window.ANHS ? window.ANHS.progress : 999;
+      svg.innerHTML = '';
+      const pts = data.points.filter((p) => p.ord <= progress);
+      const masked = data.points.length - pts.length;
+      empty.hidden = pts.length >= 2;
+      if (pts.length < 2) { legend.style.opacity = 0.4; return; }
+      legend.style.opacity = 1;
+
+      const maxOrd = Math.max(...data.points.map((p) => p.ord));
+      const x = (ord) => L + ((W - L - R) * ord) / maxOrd;
+      const y = (v) => T + (H - T - B) * (1 - v / MAXY);
+
+      // グリッドと目盛り
+      for (let v = 0; v <= MAXY; v += 250) {
+        el('line', { x1: L, x2: W - R, y1: y(v), y2: y(v), stroke: 'var(--line)', 'stroke-width': v === 0 ? 1.6 : 1 });
+        el('text', { x: L - 8, y: y(v) + 4, 'text-anchor': 'end', 'font-size': 11, fill: 'var(--ink-2)' }).textContent = String(v);
+      }
+      pts.forEach((p) => {
+        el('text', {
+          x: x(p.ord), y: H - B + 16, 'text-anchor': 'middle', 'font-size': 10.5, fill: 'var(--ink-2)',
+          transform: `rotate(-28 ${x(p.ord)} ${H - B + 16})`,
+        }).textContent = p.label;
+      });
+
+      // 未読マスク領域
+      if (masked > 0) {
+        const lastX = x(pts[pts.length - 1].ord);
+        el('rect', { x: lastX, y: T, width: W - R - lastX, height: H - T - B, fill: 'var(--mask-bg)', opacity: 0.25 });
+        el('text', {
+          x: (lastX + W - R) / 2, y: (T + H - B) / 2, 'text-anchor': 'middle',
+          'font-size': 26, 'font-weight': 800, fill: 'var(--ink-2)',
+        }).textContent = '???';
+        el('text', {
+          x: (lastX + W - R) / 2, y: (T + H - B) / 2 + 22, 'text-anchor': 'middle',
+          'font-size': 11.5, fill: 'var(--ink-2)',
+        }).textContent = 'この先は読了位置を進めると表示されます';
+      }
+
+      // 折れ線
+      data.series.forEach((s) => {
+        const d = pts.map((p, i) => `${i === 0 ? 'M' : 'L'}${x(p.ord).toFixed(1)},${y(p[s.key]).toFixed(1)}`).join(' ');
+        el('path', { d, fill: 'none', stroke: s.color, 'stroke-width': 2.6, 'stroke-linejoin': 'round' });
+        pts.forEach((p) => {
+          const c = el('circle', { cx: x(p.ord), cy: y(p[s.key]), r: 3.4, fill: s.color });
+          const tip = document.createElementNS(NS, 'title');
+          tip.textContent = `${p.label} ${s.label}: ${p[s.key]}cp${p.event ? `\n${p.event}` : ''}`;
+          c.appendChild(tip);
+        });
+      });
+    };
+
+    document.addEventListener('anhs:progress', draw);
+    window.addEventListener('DOMContentLoaded', draw);
+  </script>
+
+  <style>
+    .chart-card { padding: 16px; margin-top: 14px; }
+    .legend { display: flex; flex-wrap: wrap; gap: 12px; font-size: 0.8rem; margin-bottom: 8px; }
+    .legend :global(.legend-item) { display: inline-flex; align-items: center; gap: 5px; }
+    .legend :global(.legend-item i) {
+      width: 12px; height: 12px; border-radius: 3px; display: inline-block;
+    }
+    #chart { width: 100%; height: auto; }
+    .events { list-style: none; padding: 0; display: grid; gap: 8px; }
+    .event-item { padding: 10px 14px; display: flex; gap: 12px; align-items: baseline; font-size: 0.9rem; }
+    .event-vol {
+      flex-shrink: 0; font-size: 0.74rem; font-weight: 700; color: var(--accent);
+      background: var(--accent-soft); border-radius: 6px; padding: 2px 8px;
+    }
+  </style>
+</Base>

@@ -1,0 +1,133 @@
+---
+import Base from '../../layouts/Base.astro';
+import shindan from '../../data/shindan.json';
+---
+
+<Base title="クラス適性診断" description="12の質問であなたの適性クラスとOAA風ステータスを判定。">
+  <h1>🧭 クラス適性診断</h1>
+  <p class="muted">
+    もしあなたが高度育成高等学校に入学したら…? 12の質問で、適性クラスとOAA風ステータスを判定します。
+  </p>
+
+  <div id="sd-start" class="card panel">
+    <h2>入学適性検査のご案内</h2>
+    <p>本検査は約1分で完了します。直感で答えるほど精度が上がります。</p>
+    <button id="sd-begin" class="primary-btn">検査を開始する</button>
+  </div>
+
+  <div id="sd-play" class="card panel" hidden>
+    <p class="progress-line"><span id="sd-num"></span></p>
+    <div class="sd-bar"><div id="sd-bar-fill"></div></div>
+    <h2 id="sd-q" style="font-size: 1.1rem;"></h2>
+    <div id="sd-opts" class="choices"></div>
+  </div>
+
+  <div id="sd-result" class="panel" hidden>
+    <div class="card oaa-result">
+      <div class="oaa-result-head">
+        <span class="oaa-app-tag">OAA - 入学適性検査結果</span>
+        <h2 id="sd-title" style="margin: 6px 0 2px;"></h2>
+        <p id="sd-class" class="sd-class-label"></p>
+      </div>
+      <div class="stat-rows" id="sd-stats"></div>
+      <p id="sd-desc" style="font-size: 0.92rem;"></p>
+    </div>
+    <div class="end-actions" style="margin-top: 14px;">
+      <button id="sd-retry" class="primary-btn">もう一度診断する</button>
+      <a id="sd-share" class="share-btn" target="_blank" rel="noopener">結果をXでシェア</a>
+    </div>
+  </div>
+
+  <script is:inline define:vars={{ shindan }}>
+    const $ = (id) => document.getElementById(id);
+    const qs = shindan.questions;
+    let idx = 0;
+    let cls = { A: 0, B: 0, C: 0, D: 0 };
+    let traits = { aca: 0, phy: 0, wit: 0, soc: 0 };
+
+    const show = (panel) => {
+      ['sd-start', 'sd-play', 'sd-result'].forEach((id) => ($(id).hidden = id !== panel));
+    };
+
+    const renderQ = () => {
+      $('sd-num').textContent = `Q${idx + 1} / ${qs.length}`;
+      $('sd-bar-fill').style.width = `${(idx / qs.length) * 100}%`;
+      $('sd-q').textContent = qs[idx].q;
+      const box = $('sd-opts');
+      box.innerHTML = '';
+      qs[idx].opts
+        .map((o, i) => ({ o, i, r: Math.random() }))
+        .sort((a, b) => a.r - b.r)
+        .forEach(({ o }) => {
+          const b = document.createElement('button');
+          b.className = 'choice-btn';
+          b.textContent = o.t;
+          b.addEventListener('click', () => {
+            cls[o.cls] += 1;
+            for (const [k, v] of Object.entries(o.w ?? {})) traits[k] += v;
+            idx++;
+            if (idx < qs.length) renderQ();
+            else finish();
+          });
+          box.appendChild(b);
+        });
+    };
+
+    const gradeOf = (v, max) => {
+      const r = Math.max(0, v) / max;
+      return r >= 0.85 ? 'A' : r >= 0.65 ? 'B+' : r >= 0.5 ? 'B' : r >= 0.35 ? 'C+' : r >= 0.2 ? 'C' : 'D';
+    };
+
+    const finish = () => {
+      const best = Object.entries(cls).sort((a, b) => b[1] - a[1])[0][0];
+      const res = shindan.results[best];
+      $('sd-title').textContent = res.title;
+      $('sd-class').textContent = res.label;
+      $('sd-desc').textContent = res.desc;
+      const names = { aca: '学力', phy: '身体能力', wit: '機転思考力', soc: '社会貢献性' };
+      const maxPer = 30; // 12問×最大3の理論値近似
+      $('sd-stats').innerHTML = Object.entries(names)
+        .map(([k, label]) => {
+          const g = gradeOf(traits[k], maxPer);
+          const pct = Math.min(100, Math.round((Math.max(0, traits[k]) / maxPer) * 100 + 15));
+          return `<div class="stat-row">
+            <span class="stat-label">${label}</span>
+            <div class="stat-bar"><i style="width:${pct}%"></i></div>
+            <b class="rank" data-rank="${g}">${g}</b>
+          </div>`;
+        })
+        .join('');
+      const text = `高育入学適性検査の結果: ${res.label}「${res.title}」でした! あなたはどのクラス? #よう実 #高育ポータル`;
+      $('sd-share').href = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(location.href)}`;
+      show('sd-result');
+    };
+
+    $('sd-begin').addEventListener('click', () => {
+      idx = 0;
+      cls = { A: 0, B: 0, C: 0, D: 0 };
+      traits = { aca: 0, phy: 0, wit: 0, soc: 0 };
+      show('sd-play');
+      renderQ();
+    });
+    $('sd-retry').addEventListener('click', () => show('sd-start'));
+  </script>
+
+  <style is:global>
+    .sd-bar {
+      height: 6px; border-radius: 3px; background: var(--surface-2);
+      overflow: hidden; margin-bottom: 14px;
+    }
+    #sd-bar-fill { height: 100%; background: var(--accent); transition: width 0.25s ease; display: block; }
+    .oaa-result { padding: 22px; border-top: 4px solid var(--accent); }
+    .oaa-app-tag {
+      font-size: 0.72rem; font-weight: 700; letter-spacing: 0.08em;
+      color: var(--ink-2); text-transform: uppercase;
+    }
+    .sd-class-label { font-weight: 800; color: var(--accent); margin: 0 0 12px; }
+    .stat-rows { display: grid; gap: 8px; margin: 14px 0; }
+    .stat-row { display: grid; grid-template-columns: 90px 1fr 44px; gap: 10px; align-items: center; font-size: 0.85rem; }
+    .stat-bar { height: 9px; border-radius: 5px; background: var(--surface-2); overflow: hidden; }
+    .stat-bar i { display: block; height: 100%; background: var(--accent); border-radius: 5px; }
+    .stat-row .rank { justify-self: end; }
+  </style>
+</Base>

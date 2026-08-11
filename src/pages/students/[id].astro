@@ -1,0 +1,135 @@
+---
+import Base from '../../layouts/Base.astro';
+import Portrait from '../../components/Portrait.astro';
+import RadarChart from '../../components/RadarChart.astro';
+import data from '../../data/students.json';
+import exams from '../../data/exams.json';
+import timeline from '../../data/timeline.json';
+
+export function getStaticPaths() {
+  return data.students.map((s) => ({ params: { id: s.id } }));
+}
+
+const base = import.meta.env.BASE_URL;
+const { id } = Astro.params;
+const s = data.students.find((x) => x.id === id)!;
+
+const classLabel: Record<string, string> = {
+  A: '1年A組(坂柳クラス)', B: '1年B組(一之瀬クラス)',
+  C: '1年C組(龍園クラス)', D: '1年D組(綾小路・堀北クラス)',
+};
+const groupLabel = data.groups.find((g) => g.key === s.group)?.label ?? '';
+
+const AXES = [
+  ['academic', '学力'], ['physical', '身体能力'], ['adapt', '機転思考力'], ['social', '社会貢献性'],
+] as const;
+const radarValues = (oaa: any) => AXES.map(([k, label]) => ({ label, grade: oaa[k][0], score: oaa[k][1] }));
+
+const relatedExams = exams.filter((e) => e.chars.includes(s.id));
+const spLabel = (sp: number) => timeline.volumes.find((v) => v.ord === sp)?.label ?? '';
+---
+
+<Base title={`${s.name}(${s.kana})`} description={`${s.name}のOAA風能力データと人物データ。${s.bio.slice(0, 60)}`}>
+  <nav class="crumbs muted"><a href={`${base}students/`}>生徒名鑑</a> / {s.name}</nav>
+
+  <div class="profile card">
+    <div class="profile-head">
+      <Portrait id={s.portrait ? s.id : `sil-${s.id}`} size={128} classKey={s.class} />
+      <div>
+        <h1>{s.name} <small class="muted">{s.kana}</small></h1>
+        <p class="tags">
+          {s.class && <span class="class-chip" data-class={s.class}>{classLabel[s.class]}</span>}
+          <span class="group-tag">{groupLabel}</span>
+        </p>
+        {'status' in s && s.status && (
+          <p data-sp={s.status.sp} data-sp-label={spLabel(s.status.sp)}>
+            <span class="status-badge">⚠ {s.status.text}</span>
+          </p>
+        )}
+      </div>
+    </div>
+    <p class="bio">{s.bio}</p>
+  </div>
+
+  {s.oaa && (
+    <section>
+      <h2 class="section-title">OAA 能力データ<small class="muted">(管理人推定を含む)</small></h2>
+      <div class="oaa-wrap">
+        <div class="card oaa-card">
+          <h3>公式評価{'oaaTrue' in s && s.oaaTrue ? '(表向き)' : ''}</h3>
+          <RadarChart values={radarValues(s.oaa)} />
+        </div>
+        {'oaaTrue' in s && s.oaaTrue && (
+          <div class="card oaa-card" data-sp="8" data-sp-label="1年生編7巻">
+            <h3>真の実力(ネタバレ)</h3>
+            <RadarChart values={radarValues(s.oaaTrue)} />
+          </div>
+        )}
+      </div>
+    </section>
+  )}
+
+  {'notes' in s && s.notes && s.notes.length > 0 && (
+    <section>
+      <h2 class="section-title">その後の歩み<small class="muted">(読了位置に応じて表示)</small></h2>
+      <div data-sp-count>
+        <p class="sp-note"></p>
+        <ul class="notes">
+          {s.notes.map((n) => (
+            <li class="card note-item" data-sp={n.sp} data-sp-label={spLabel(n.sp)}>
+              <span class="note-vol">{spLabel(n.sp)}</span>
+              <span>{n.text}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </section>
+  )}
+
+  {relatedExams.length > 0 && (
+    <section>
+      <h2 class="section-title">関連する特別試験</h2>
+      <div data-sp-count>
+        <p class="sp-note"></p>
+        <ul class="exam-links">
+          {relatedExams.map((e) => (
+            <li data-sp={e.sp > 1 ? e.sp : undefined} data-sp-hide={e.sp > 1 ? '' : undefined}>
+              <a href={`${base}exams/${e.id}/`} class="card exam-link">
+                <span class="muted">{e.arc}{e.vol}巻</span> {e.name}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </section>
+  )}
+
+  <style>
+    .crumbs { font-size: 0.85rem; margin-bottom: 12px; }
+    .profile { padding: 20px; }
+    .profile-head { display: flex; gap: 18px; align-items: center; flex-wrap: wrap; }
+    .profile-head h1 { margin: 0 0 6px; font-size: 1.5rem; }
+    .tags { display: flex; gap: 8px; flex-wrap: wrap; margin: 0; }
+    .group-tag {
+      font-size: 0.8em; padding: 0.1em 0.6em; border-radius: 999px;
+      background: var(--surface-2); color: var(--ink-2);
+    }
+    .status-badge {
+      display: inline-block; background: var(--accent-soft); color: var(--accent);
+      font-weight: 700; font-size: 0.85rem; border-radius: 8px; padding: 3px 10px;
+    }
+    .bio { margin-bottom: 0; }
+    .oaa-wrap { display: flex; gap: 14px; flex-wrap: wrap; }
+    .oaa-card { padding: 14px 18px; }
+    .oaa-card h3 { margin: 0 0 4px; font-size: 0.95rem; color: var(--ink-2); }
+    .notes { list-style: none; padding: 0; display: grid; gap: 10px; }
+    .note-item { padding: 12px 14px; display: flex; gap: 12px; align-items: baseline; }
+    .note-vol {
+      flex-shrink: 0; font-size: 0.75rem; font-weight: 700; color: var(--accent);
+      background: var(--accent-soft); border-radius: 6px; padding: 2px 8px;
+    }
+    .exam-links { list-style: none; padding: 0; display: grid; gap: 8px; }
+    .exam-link { display: block; padding: 10px 14px; text-decoration: none; }
+    .exam-link:hover { border-color: var(--accent); }
+  </style>
+</Base>

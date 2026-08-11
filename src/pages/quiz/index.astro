@@ -1,0 +1,171 @@
+---
+import Base from '../../layouts/Base.astro';
+import quiz from '../../data/quiz.json';
+---
+
+<Base title="原作知識クイズ" description="よう実の原作知識クイズ。難易度3段階・読了位置より先の問題は出題されません。">
+  <h1>✏️ 原作知識クイズ</h1>
+  <p class="muted">各難易度から10問をランダム出題。読了位置(右上📖)より先の内容はネタバレ防止のため出題されません。</p>
+
+  <div id="quiz-start" class="card panel">
+    <h2>難易度を選択</h2>
+    <div class="level-btns">
+      <button class="level-btn" data-level="1">基礎<br /><small>アニメ視聴でもOK</small></button>
+      <button class="level-btn" data-level="2">応用<br /><small>1年生編読了向け</small></button>
+      <button class="level-btn" data-level="3">上級<br /><small>2年生編読了向け</small></button>
+    </div>
+    <p id="quiz-availability" class="muted" style="font-size: 0.82rem;"></p>
+  </div>
+
+  <div id="quiz-play" class="card panel" hidden>
+    <p class="progress-line"><span id="q-num"></span> <span id="q-score" class="muted"></span></p>
+    <h2 id="q-text" style="font-size: 1.1rem;"></h2>
+    <div id="q-choices" class="choices"></div>
+    <div id="q-feedback" hidden>
+      <p id="q-result" style="font-weight: 800;"></p>
+      <p id="q-expl" class="muted" style="font-size: 0.9rem;"></p>
+      <button id="q-next" class="primary-btn">次の問題へ</button>
+    </div>
+  </div>
+
+  <div id="quiz-end" class="card panel" hidden>
+    <h2>試験終了</h2>
+    <div class="verdict">
+      <div class="verdict-rank rank" id="end-rank" data-rank="A">A</div>
+      <div>
+        <p id="end-score" style="font-size: 1.2rem; font-weight: 800; margin: 0;"></p>
+        <p id="end-comment" class="muted" style="margin: 4px 0 0;"></p>
+      </div>
+    </div>
+    <div class="end-actions">
+      <button id="q-retry" class="primary-btn">もう一度挑戦</button>
+      <a id="q-share" class="share-btn" target="_blank" rel="noopener">結果をXでシェア</a>
+    </div>
+  </div>
+
+  <script is:inline define:vars={{ quiz }}>
+    const $ = (id) => document.getElementById(id);
+    let pool = [], idx = 0, score = 0, currentLevel = 1;
+    const LEVEL_NAMES = { 1: '基礎', 2: '応用', 3: '上級' };
+
+    const progress = () => (window.ANHS ? window.ANHS.progress : 0);
+    const available = (level) => quiz.filter((q) => q.level === level && q.sp <= progress());
+
+    const updateAvailability = () => {
+      const counts = [1, 2, 3].map((l) => `${LEVEL_NAMES[l]}: ${available(l).length}問`);
+      $('quiz-availability').textContent = `現在の読了位置で出題可能 — ${counts.join(' / ')}`;
+      document.querySelectorAll('.level-btn').forEach((b) => {
+        b.disabled = available(Number(b.dataset.level)).length < 3;
+      });
+    };
+    document.addEventListener('anhs:progress', updateAvailability);
+    window.addEventListener('DOMContentLoaded', updateAvailability);
+
+    const show = (panel) => {
+      ['quiz-start', 'quiz-play', 'quiz-end'].forEach((id) => ($(id).hidden = id !== panel));
+    };
+
+    const renderQ = () => {
+      const q = pool[idx];
+      $('q-num').textContent = `第${idx + 1}問 / 全${pool.length}問`;
+      $('q-score').textContent = `正解 ${score}`;
+      $('q-text').textContent = q.q;
+      $('q-feedback').hidden = true;
+      const box = $('q-choices');
+      box.innerHTML = '';
+      q.a.forEach((choice, i) => {
+        const b = document.createElement('button');
+        b.className = 'choice-btn';
+        b.textContent = choice;
+        b.addEventListener('click', () => answer(i, b));
+        box.appendChild(b);
+      });
+    };
+
+    const answer = (i, btn) => {
+      const q = pool[idx];
+      const ok = i === q.c;
+      if (ok) score++;
+      document.querySelectorAll('.choice-btn').forEach((b, bi) => {
+        b.disabled = true;
+        if (bi === q.c) b.classList.add('correct');
+      });
+      if (!ok) btn.classList.add('wrong');
+      $('q-result').textContent = ok ? '⭕ 正解!' : '❌ 不正解…';
+      $('q-expl').textContent = q.expl;
+      $('q-feedback').hidden = false;
+      $('q-next').textContent = idx + 1 < pool.length ? '次の問題へ' : '結果を見る';
+    };
+
+    const finish = () => {
+      const pct = score / pool.length;
+      const rank = pct >= 0.9 ? 'A' : pct >= 0.7 ? 'B' : pct >= 0.5 ? 'C' : pct >= 0.3 ? 'D' : 'E';
+      const comments = {
+        A: 'ホワイトルーム級。あなたの知識は学年トップクラスです。',
+        B: 'Aクラス昇格圏内。かなりの読み込みです。',
+        C: '平均点クリア。赤点の心配はありません。',
+        D: '追試ライン。もう一周読み直しましょう。',
+        E: '退学の危機です。1巻から読み直すことをお勧めします。',
+      };
+      $('end-rank').textContent = rank;
+      $('end-rank').dataset.rank = rank;
+      $('end-score').textContent = `${LEVEL_NAMES[currentLevel]}コース ${score} / ${pool.length} 問正解`;
+      $('end-comment').textContent = comments[rank];
+      const text = `よう実知識クイズ(${LEVEL_NAMES[currentLevel]})で ${score}/${pool.length} 問正解、評価${rank}ランクでした! #よう実 #高育ポータル`;
+      $('q-share').href = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(location.href)}`;
+      show('quiz-end');
+    };
+
+    document.querySelectorAll('.level-btn').forEach((b) => {
+      b.addEventListener('click', () => {
+        currentLevel = Number(b.dataset.level);
+        pool = available(currentLevel).sort(() => Math.random() - 0.5).slice(0, 10);
+        idx = 0;
+        score = 0;
+        show('quiz-play');
+        renderQ();
+      });
+    });
+    $('q-next').addEventListener('click', () => {
+      idx++;
+      if (idx < pool.length) renderQ();
+      else finish();
+    });
+    $('q-retry').addEventListener('click', () => show('quiz-start'));
+  </script>
+
+  <style is:global>
+    .panel { padding: 20px; margin-top: 14px; }
+    .level-btns { display: grid; gap: 10px; grid-template-columns: repeat(3, 1fr); }
+    .level-btn {
+      padding: 14px 8px; border-radius: 10px; border: 1px solid var(--line);
+      background: var(--surface-2); color: var(--ink); font-weight: 800; font-size: 1rem;
+      cursor: pointer; line-height: 1.5;
+    }
+    .level-btn small { font-weight: 400; font-size: 0.72rem; color: var(--ink-2); }
+    .level-btn:hover:not(:disabled) { border-color: var(--accent); }
+    .level-btn:disabled { opacity: 0.45; cursor: not-allowed; }
+    .choices { display: grid; gap: 8px; margin: 14px 0; }
+    .choice-btn {
+      text-align: left; padding: 11px 14px; border-radius: 9px;
+      border: 1px solid var(--line); background: var(--surface-2); color: var(--ink);
+      font-size: 0.95rem; cursor: pointer;
+    }
+    .choice-btn:hover:not(:disabled) { border-color: var(--accent); }
+    .choice-btn.correct { border-color: #2e8b57; background: color-mix(in srgb, #2e8b57 16%, var(--surface-2)); }
+    .choice-btn.wrong { border-color: var(--accent); background: var(--accent-soft); }
+    .progress-line { display: flex; justify-content: space-between; font-size: 0.85rem; font-weight: 700; }
+    .primary-btn {
+      background: var(--accent); color: var(--accent-ink); border: none;
+      border-radius: 8px; padding: 10px 20px; font-weight: 700; cursor: pointer; font-size: 0.95rem;
+    }
+    .verdict { display: flex; gap: 16px; align-items: center; margin: 14px 0; }
+    .verdict-rank { font-size: 2rem; min-width: 1.9em; padding: 0.15em 0.3em; }
+    .end-actions { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+    .share-btn {
+      display: inline-block; border: 1px solid var(--line); border-radius: 8px;
+      padding: 9px 16px; text-decoration: none; font-size: 0.9rem; font-weight: 700;
+    }
+    .share-btn:hover { border-color: var(--accent); }
+  </style>
+</Base>

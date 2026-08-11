@@ -1,0 +1,145 @@
+---
+import Base from '../../layouts/Base.astro';
+import Portrait from '../../components/Portrait.astro';
+import data from '../../data/students.json';
+
+const base = import.meta.env.BASE_URL;
+const students = data.students;
+
+const classSections = [
+  { key: 'A', title: '1年A組(坂柳クラス)' },
+  { key: 'B', title: '1年B組(一之瀬クラス)' },
+  { key: 'C', title: '1年C組(龍園クラス)' },
+  { key: 'D', title: '1年D組(綾小路・堀北クラス)' },
+];
+const otherSections = [
+  { key: 'senior', title: '上級生・生徒会' },
+  { key: 'junior', title: '1学年下(2年生編の新入生)' },
+  { key: 'staff', title: '教職員・関係者' },
+];
+const mainOf = (cls: string) => students.filter((s) => s.group === 'main' && s.class === cls);
+const groupOf = (g: string) => students.filter((s) => s.group === g);
+---
+
+<Base title="生徒名鑑" description="OAA風レーダーチャート付きのキャラクター名鑑。クラス別・学年別に全キャラを収録。">
+  <h1>🎓 生徒名鑑 <small class="muted">OAA - 学力至上主義データベース</small></h1>
+  <p class="muted">能力値は2年生編開始時点の描写を基にした管理人推定です。カードをタップすると詳細データを閲覧できます。</p>
+
+  <div class="toolbar card">
+    <input id="q" type="search" placeholder="名前・かなで検索" />
+    <div class="chips">
+      <button class="filter-chip active" data-filter="">全員</button>
+      {classSections.map((c) => (
+        <button class="filter-chip" data-filter={`class-${c.key}`}>{c.key}組</button>
+      ))}
+      {otherSections.map((g) => (
+        <button class="filter-chip" data-filter={`group-${g.key}`}>{g.title.split('(')[0]}</button>
+      ))}
+    </div>
+  </div>
+
+  <div id="roster" data-sp-count>
+    <p class="sp-note"></p>
+    {classSections.map((c) => (
+      <section class="roster-section" data-section={`class-${c.key}`}>
+        <h2 class="section-title">{c.title}</h2>
+        <div class="grid cards">
+          {mainOf(c.key).map((s) => (
+            <a
+              href={`${base}students/${s.id}/`}
+              class="student-card card"
+              data-sp={s.sp > 1 ? s.sp : undefined}
+              data-sp-hide={s.sp > 1 ? '' : undefined}
+              data-name={`${s.name} ${s.kana}`}
+            >
+              <Portrait id={s.portrait ? s.id : `sil-${s.id}`} size={72} classKey={s.class} />
+              <div class="student-meta">
+                <strong>{s.name}</strong>
+                <small class="muted">{s.kana}</small>
+                {s.oaa && (
+                  <div class="mini-oaa">
+                    <span>学 <b class="rank" data-rank={s.oaa.academic[0]}>{s.oaa.academic[0]}</b></span>
+                    <span>身 <b class="rank" data-rank={s.oaa.physical[0]}>{s.oaa.physical[0]}</b></span>
+                  </div>
+                )}
+              </div>
+            </a>
+          ))}
+        </div>
+      </section>
+    ))}
+    {otherSections.map((g) => (
+      <section class="roster-section" data-section={`group-${g.key}`}>
+        <h2 class="section-title">{g.title}</h2>
+        <div class="grid cards">
+          {groupOf(g.key).map((s) => (
+            <a
+              href={`${base}students/${s.id}/`}
+              class="student-card card"
+              data-sp={s.sp > 1 ? s.sp : undefined}
+              data-sp-hide={s.sp > 1 ? '' : undefined}
+              data-name={`${s.name} ${s.kana}`}
+            >
+              <Portrait id={s.portrait ? s.id : `sil-${s.id}`} size={72} classKey={s.class} />
+              <div class="student-meta">
+                <strong>{s.name}</strong>
+                <small class="muted">{s.kana}</small>
+              </div>
+            </a>
+          ))}
+        </div>
+      </section>
+    ))}
+  </div>
+
+  <script>
+    const q = document.getElementById('q') as HTMLInputElement;
+    const cards = [...document.querySelectorAll<HTMLElement>('.student-card')];
+    const sections = [...document.querySelectorAll<HTMLElement>('.roster-section')];
+    let filter = '';
+
+    const applyFilter = () => {
+      const term = q.value.trim().toLowerCase();
+      sections.forEach((sec) => {
+        const visible = filter === '' || sec.dataset.section === filter;
+        sec.style.display = visible ? '' : 'none';
+      });
+      cards.forEach((c) => {
+        const hit = term === '' || (c.dataset.name ?? '').toLowerCase().includes(term);
+        c.style.setProperty('display', hit ? '' : 'none');
+      });
+    };
+    q.addEventListener('input', applyFilter);
+    document.querySelectorAll<HTMLElement>('.filter-chip').forEach((b) => {
+      b.addEventListener('click', () => {
+        document.querySelectorAll('.filter-chip').forEach((x) => x.classList.remove('active'));
+        b.classList.add('active');
+        filter = b.dataset.filter ?? '';
+        applyFilter();
+      });
+    });
+  </script>
+
+  <style>
+    .toolbar { padding: 14px; display: flex; flex-direction: column; gap: 10px; margin-top: 14px; }
+    .toolbar input {
+      padding: 9px 12px; border-radius: 8px; border: 1px solid var(--line);
+      background: var(--bg); color: var(--ink); font-size: 0.95rem;
+    }
+    .chips { display: flex; flex-wrap: wrap; gap: 6px; }
+    .filter-chip {
+      border: 1px solid var(--line); background: var(--surface-2); color: var(--ink);
+      border-radius: 999px; padding: 4px 12px; font-size: 0.82rem; cursor: pointer;
+    }
+    .filter-chip.active { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+    .cards { grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); }
+    .student-card {
+      display: flex; gap: 12px; align-items: center; padding: 12px;
+      text-decoration: none; transition: transform 0.1s ease;
+    }
+    .student-card:hover { transform: translateY(-2px); border-color: var(--accent); }
+    .student-meta { display: flex; flex-direction: column; line-height: 1.4; min-width: 0; }
+    .student-meta strong { font-size: 1rem; }
+    .mini-oaa { display: flex; gap: 8px; font-size: 0.72rem; color: var(--ink-2); margin-top: 4px; }
+  </style>
+</Base>
