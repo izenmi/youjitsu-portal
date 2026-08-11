@@ -1964,7 +1964,7 @@
       "group": "main",
       "class": "A",
       "sp": 3,
-      "portrait": false,
+      "portrait": true,
       "oaa": {
         "academic": [
           "B",
