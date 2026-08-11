@@ -10,7 +10,7 @@ interface Props {
 type Cfg = {
   gender: 'm' | 'f';
   front: 'flat' | 'side' | 'curtain' | 'messy' | 'neat' | 'spiky' | 'slick' | 'hime' | 'buzz' | 'none';
-  back: 'short-m' | 'mid' | 'bob' | 'long' | 'wavy' | 'ponytail' | 'twin' | 'buns' | 'mane' | 'none';
+  back: 'short-m' | 'mid' | 'bob' | 'long' | 'wavy' | 'ponytail' | 'twin' | 'buns' | 'mane' | 'topknot' | 'none';
   hair: string;
   eyes: string;
   expr: 'neutral' | 'smile' | 'smirk' | 'shy' | 'fierce' | 'soft';
@@ -51,6 +51,9 @@ const CONFIGS: Record<string, Cfg> = {
   mashima: { gender: 'm', front: 'neat', back: 'short-m', hair: '#6b5f4a', eyes: '#4a4a40', expr: 'neutral', jacket: '#3d4458' },
   'sakayanagi-dir': { gender: 'm', front: 'neat', back: 'short-m', hair: '#d8d8dc', eyes: '#5a7a9a', expr: 'neutral', glasses: true, jacket: '#7a8290' },
   yahiko: { gender: 'm', front: 'buzz', back: 'short-m', hair: '#4a6b3f', eyes: '#a8a848', expr: 'neutral' },
+  ishigami: { gender: 'm', front: 'curtain', back: 'topknot', hair: '#b8c4c4', eyes: '#7a8a94', expr: 'neutral' },
+  utomiya: { gender: 'm', front: 'messy', back: 'short-m', hair: '#33475c', eyes: '#4a5a8a', expr: 'fierce' },
+  shiraishi: { gender: 'f', front: 'side', back: 'long', hair: '#ded4c4', eyes: '#8a80a0', expr: 'soft', hairband: '#3a3a44' },
   // --- 女子 ---
   horikita: { gender: 'f', front: 'hime', back: 'bob', hair: '#2a2731', eyes: '#b0405c', expr: 'neutral' },
   karuizawa: { gender: 'f', front: 'side', back: 'ponytail', hair: '#e8b45e', eyes: '#4f7ad9', expr: 'smile', ribbon: '#d94f6d' },
@@ -103,6 +106,12 @@ const isM = cfg?.gender === 'm';
 
       {/* 後ろ髪 */}
       {cfg.back === 'short-m' && <path d="M33 58 Q29 36 42 27 Q52 21 60 21 Q68 21 78 27 Q91 36 87 58 Q74 52 60 52 Q46 52 33 58 Z" fill={cfg.hair} />}
+      {cfg.back === 'topknot' && (
+        <>
+          <path d="M33 58 Q29 36 42 27 Q52 21 60 21 Q68 21 78 27 Q91 36 87 58 Q74 52 60 52 Q46 52 33 58 Z" fill={cfg.hair} />
+          <circle cx="63" cy="19" r="6.5" fill={cfg.hair} />
+        </>
+      )}
       {cfg.back === 'mane' && (
         <>
           <path d="M33 58 Q29 34 42 25 Q52 19 60 19 Q68 19 78 25 Q91 34 87 58 Q74 52 60 52 Q46 52 33 58 Z" fill={cfg.hair} />

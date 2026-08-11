@@ -2489,8 +2489,8 @@
     },
     {
       "id": "tsukishiro",
-      "name": "月城常盤",
-      "kana": "つきしろ ときわ",
+      "name": "月城常成",
+      "kana": "つきしろ つねなり",
       "group": "staff",
       "class": null,
       "sp": 13,
@@ -2503,6 +2503,1372 @@
           "text": "無人島試験で自ら綾小路の前に立ち、その企みに決着がつけられた。"
         }
       ]
+    },
+    {
+      "id": "ishida-y",
+      "name": "石田優介",
+      "kana": "いしだ ゆうすけ",
+      "group": "main",
+      "class": "A",
+      "sp": 1,
+      "portrait": false,
+      "bio": "1年A組(坂柳クラス)の生徒。"
+    },
+    {
+      "id": "kito",
+      "name": "鬼頭隼",
+      "kana": "きとう はやと",
+      "group": "main",
+      "class": "A",
+      "sp": 1,
+      "portrait": false,
+      "bio": "坂柳クラスの大柄な武闘派。寡黙だが腕っぷしはクラス随一で、体育祭などの前線で存在感を放つ。"
+    },
+    {
+      "id": "satonaka",
+      "name": "里中聡",
+      "kana": "",
+      "group": "main",
+      "class": "A",
+      "sp": 1,
+      "portrait": false,
+      "bio": "1年A組(坂柳クラス)の生徒。"
+    },
+    {
+      "id": "sanada",
+      "name": "真田康生",
+      "kana": "さなだ こうせい",
+      "group": "main",
+      "class": "A",
+      "sp": 1,
+      "portrait": false,
+      "bio": "1年A組(坂柳クラス)の生徒。"
+    },
+    {
+      "id": "shimazaki-i",
+      "name": "島崎いっけい",
+      "kana": "しまざき いっけい",
+      "group": "main",
+      "class": "A",
+      "sp": 1,
+      "portrait": false,
+      "bio": "1年A組(坂柳クラス)の生徒。"
+    },
+    {
+      "id": "shimizu-n",
+      "name": "清水直樹",
+      "kana": "しみず なおき",
+      "group": "main",
+      "class": "A",
+      "sp": 1,
+      "portrait": false,
+      "bio": "1年A組(坂柳クラス)の生徒。"
+    },
+    {
+      "id": "sugio",
+      "name": "杉尾大",
+      "kana": "",
+      "group": "main",
+      "class": "A",
+      "sp": 1,
+      "portrait": false,
+      "bio": "1年A組(坂柳クラス)の生徒。"
+    },
+    {
+      "id": "takemoto",
+      "name": "竹本茂",
+      "kana": "たけもと しげる",
+      "group": "main",
+      "class": "A",
+      "sp": 1,
+      "portrait": false,
+      "bio": "1年A組(坂柳クラス)の生徒。"
+    },
+    {
+      "id": "shijo",
+      "name": "司城大河",
+      "kana": "",
+      "group": "main",
+      "class": "A",
+      "sp": 1,
+      "portrait": false,
+      "bio": "1年A組(坂柳クラス)の生徒。"
+    },
+    {
+      "id": "toba",
+      "name": "鳥羽茂",
+      "kana": "とば しげる",
+      "group": "main",
+      "class": "A",
+      "sp": 1,
+      "portrait": false,
+      "bio": "1年A組(坂柳クラス)の生徒。"
+    },
+    {
+      "id": "machida",
+      "name": "町田浩二",
+      "kana": "まちだ こうじ",
+      "group": "main",
+      "class": "A",
+      "sp": 1,
+      "portrait": false,
+      "bio": "1年A組(坂柳クラス)の生徒。"
+    },
+    {
+      "id": "matoba",
+      "name": "的場信二",
+      "kana": "まとば しんじ",
+      "group": "main",
+      "class": "A",
+      "sp": 1,
+      "portrait": false,
+      "bio": "1年A組(坂柳クラス)の生徒。"
+    },
+    {
+      "id": "morishige",
+      "name": "森重卓郎",
+      "kana": "もりしげ たくろう",
+      "group": "main",
+      "class": "A",
+      "sp": 1,
+      "portrait": false,
+      "bio": "1年A組(坂柳クラス)の生徒。"
+    },
+    {
+      "id": "morimiya",
+      "name": "森宮",
+      "kana": "",
+      "group": "main",
+      "class": "A",
+      "sp": 1,
+      "portrait": false,
+      "bio": "1年A組(坂柳クラス)の生徒。"
+    },
+    {
+      "id": "yanagibashi",
+      "name": "柳橋元史",
+      "kana": "",
+      "group": "main",
+      "class": "A",
+      "sp": 1,
+      "portrait": false,
+      "bio": "1年A組(坂柳クラス)の生徒。"
+    },
+    {
+      "id": "yoshida-k",
+      "name": "吉田健太",
+      "kana": "よしだ けんた",
+      "group": "main",
+      "class": "A",
+      "sp": 1,
+      "portrait": false,
+      "bio": "1年A組(坂柳クラス)の生徒。"
+    },
+    {
+      "id": "sawada",
+      "name": "沢田恭美",
+      "kana": "さわだ きょうみ",
+      "group": "main",
+      "class": "A",
+      "sp": 1,
+      "portrait": false,
+      "bio": "1年A組(坂柳クラス)の生徒。"
+    },
+    {
+      "id": "takanashi",
+      "name": "小鳥遊コウ",
+      "kana": "たかなし こう",
+      "group": "main",
+      "class": "A",
+      "sp": 1,
+      "portrait": false,
+      "bio": "1年A組(坂柳クラス)の生徒。"
+    },
+    {
+      "id": "tanihara",
+      "name": "谷原真緒",
+      "kana": "たにはら まお",
+      "group": "main",
+      "class": "A",
+      "sp": 1,
+      "portrait": false,
+      "bio": "1年A組(坂柳クラス)の生徒。"
+    },
+    {
+      "id": "tamiya",
+      "name": "田宮江美",
+      "kana": "たみや えみ",
+      "group": "main",
+      "class": "A",
+      "sp": 1,
+      "portrait": false,
+      "bio": "1年A組(坂柳クラス)の生徒。"
+    },
+    {
+      "id": "tsukaji",
+      "name": "塚地しほり",
+      "kana": "つかじ しほり",
+      "group": "main",
+      "class": "A",
+      "sp": 1,
+      "portrait": false,
+      "bio": "1年A組(坂柳クラス)の生徒。"
+    },
+    {
+      "id": "nakajima-r",
+      "name": "中島理子",
+      "kana": "なかじま りこ",
+      "group": "main",
+      "class": "A",
+      "sp": 1,
+      "portrait": false,
+      "bio": "1年A組(坂柳クラス)の生徒。"
+    },
+    {
+      "id": "nishikawa",
+      "name": "西川亮子",
+      "kana": "にしかわ りょうこ",
+      "group": "main",
+      "class": "A",
+      "sp": 1,
+      "portrait": false,
+      "bio": "1年A組(坂柳クラス)の生徒。"
+    },
+    {
+      "id": "nishi-h",
+      "name": "西春香",
+      "kana": "にし はるか",
+      "group": "main",
+      "class": "A",
+      "sp": 1,
+      "portrait": false,
+      "bio": "1年A組(坂柳クラス)の生徒。"
+    },
+    {
+      "id": "fukuyama",
+      "name": "福山しのぶ",
+      "kana": "ふくやま しのぶ",
+      "group": "main",
+      "class": "A",
+      "sp": 1,
+      "portrait": false,
+      "bio": "1年A組(坂柳クラス)の生徒。"
+    },
+    {
+      "id": "hoashi",
+      "name": "帆足",
+      "kana": "ほあし",
+      "group": "main",
+      "class": "A",
+      "sp": 1,
+      "portrait": false,
+      "bio": "1年A組(坂柳クラス)の生徒。"
+    },
+    {
+      "id": "motodoi",
+      "name": "元土肥千佳子",
+      "kana": "",
+      "group": "main",
+      "class": "A",
+      "sp": 1,
+      "portrait": false,
+      "bio": "1年A組(坂柳クラス)の生徒。"
+    },
+    {
+      "id": "morishita",
+      "name": "森下藍",
+      "kana": "もりした あい",
+      "group": "main",
+      "class": "A",
+      "sp": 1,
+      "portrait": false,
+      "bio": "1年A組(坂柳クラス)の生徒。"
+    },
+    {
+      "id": "yamamura",
+      "name": "山村美紀",
+      "kana": "やまむら みき",
+      "group": "main",
+      "class": "A",
+      "sp": 1,
+      "portrait": false,
+      "bio": "「影の薄さ」を自覚する物静かな女子。目立たないがゆえの観察眼を持ち、2年生編以降じわじわと出番を増やす。"
+    },
+    {
+      "id": "yano-k",
+      "name": "矢野小春",
+      "kana": "やの こはる",
+      "group": "main",
+      "class": "A",
+      "sp": 1,
+      "portrait": false,
+      "bio": "1年A組(坂柳クラス)の生徒。"
+    },
+    {
+      "id": "rokkaku",
+      "name": "六角百恵",
+      "kana": "ろっかく ももえ",
+      "group": "main",
+      "class": "A",
+      "sp": 1,
+      "portrait": false,
+      "bio": "1年A組(坂柳クラス)の生徒。"
+    },
+    {
+      "id": "shiraishi",
+      "name": "白石飛鳥",
+      "kana": "しらいし あすか",
+      "group": "main",
+      "class": "A",
+      "sp": 30,
+      "portrait": true,
+      "bio": "坂柳クラス出身で、3年生編から本格的に登場する女子生徒。学力は高いが身体能力は低めの物静かな性格。異性関係の噂がささやかれており、突然クラス移籍してきた綾小路に興味を持つ。",
+      "oaaHist": [
+        {
+          "era": "3年生編開始時点",
+          "sp": 30,
+          "academic": [
+            "B+",
+            76
+          ],
+          "physical": [
+            "D",
+            34
+          ],
+          "adapt": [
+            "C+",
+            57
+          ],
+          "social": [
+            "C-",
+            44
+          ],
+          "overall": [
+            "C",
+            54
+          ]
+        }
+      ]
+    },
+    {
+      "id": "sumida",
+      "name": "墨田誠",
+      "kana": "すみだ まこと",
+      "group": "main",
+      "class": "B",
+      "sp": 1,
+      "portrait": false,
+      "bio": "1年B組(一之瀬クラス)の生徒。"
+    },
+    {
+      "id": "chiba",
+      "name": "千葉",
+      "kana": "ちば",
+      "group": "main",
+      "class": "B",
+      "sp": 1,
+      "portrait": false,
+      "bio": "1年B組(一之瀬クラス)の生徒。"
+    },
+    {
+      "id": "tokito-k",
+      "name": "時任克己",
+      "kana": "",
+      "group": "main",
+      "class": "B",
+      "sp": 1,
+      "portrait": false,
+      "bio": "1年B組(一之瀬クラス)の生徒。"
+    },
+    {
+      "id": "nakanishi",
+      "name": "中西次郎",
+      "kana": "なかにし じろう",
+      "group": "main",
+      "class": "B",
+      "sp": 1,
+      "portrait": false,
+      "bio": "1年B組(一之瀬クラス)の生徒。"
+    },
+    {
+      "id": "niura",
+      "name": "新浦",
+      "kana": "",
+      "group": "main",
+      "class": "B",
+      "sp": 1,
+      "portrait": false,
+      "bio": "1年B組(一之瀬クラス)の生徒。"
+    },
+    {
+      "id": "hattori",
+      "name": "服部",
+      "kana": "はっとり",
+      "group": "main",
+      "class": "B",
+      "sp": 1,
+      "portrait": false,
+      "bio": "1年B組(一之瀬クラス)の生徒。"
+    },
+    {
+      "id": "hamaguchi",
+      "name": "浜口哲也",
+      "kana": "はまぐち てつや",
+      "group": "main",
+      "class": "B",
+      "sp": 1,
+      "portrait": false,
+      "bio": "温厚で協調性の高い男子。一之瀬クラスらしい良識派で、クラスの調和を支える。"
+    },
+    {
+      "id": "beppu",
+      "name": "別府良太",
+      "kana": "べっぷ りょうた",
+      "group": "main",
+      "class": "B",
+      "sp": 1,
+      "portrait": false,
+      "bio": "1年B組(一之瀬クラス)の生徒。"
+    },
+    {
+      "id": "mitarai",
+      "name": "御手洗",
+      "kana": "みたらい",
+      "group": "main",
+      "class": "B",
+      "sp": 1,
+      "portrait": false,
+      "bio": "1年B組(一之瀬クラス)の生徒。"
+    },
+    {
+      "id": "moriyama",
+      "name": "森山進",
+      "kana": "もりやま すすむ",
+      "group": "main",
+      "class": "B",
+      "sp": 1,
+      "portrait": false,
+      "bio": "1年B組(一之瀬クラス)の生徒。"
+    },
+    {
+      "id": "yonezu",
+      "name": "米津春斗",
+      "kana": "よねづ はると",
+      "group": "main",
+      "class": "B",
+      "sp": 1,
+      "portrait": false,
+      "bio": "1年B組(一之瀬クラス)の生徒。"
+    },
+    {
+      "id": "watanabe-n",
+      "name": "渡辺紀仁",
+      "kana": "",
+      "group": "main",
+      "class": "B",
+      "sp": 1,
+      "portrait": false,
+      "bio": "1年B組(一之瀬クラス)の生徒。"
+    },
+    {
+      "id": "aragaki",
+      "name": "新垣樹",
+      "kana": "",
+      "group": "main",
+      "class": "B",
+      "sp": 1,
+      "portrait": false,
+      "bio": "1年B組(一之瀬クラス)の生徒。"
+    },
+    {
+      "id": "ando",
+      "name": "安藤紗代",
+      "kana": "あんどう さよ",
+      "group": "main",
+      "class": "B",
+      "sp": 1,
+      "portrait": false,
+      "bio": "1年B組(一之瀬クラス)の生徒。"
+    },
+    {
+      "id": "iizuka",
+      "name": "飯塚",
+      "kana": "いいづか",
+      "group": "main",
+      "class": "B",
+      "sp": 1,
+      "portrait": false,
+      "bio": "1年B組(一之瀬クラス)の生徒。"
+    },
+    {
+      "id": "iguchi",
+      "name": "井口真白",
+      "kana": "いぐち ましろ",
+      "group": "main",
+      "class": "B",
+      "sp": 1,
+      "portrait": false,
+      "bio": "1年B組(一之瀬クラス)の生徒。"
+    },
+    {
+      "id": "ishimaru",
+      "name": "石丸ゆり子",
+      "kana": "いしまる ゆりこ",
+      "group": "main",
+      "class": "B",
+      "sp": 1,
+      "portrait": false,
+      "bio": "1年B組(一之瀬クラス)の生徒。"
+    },
+    {
+      "id": "onuki",
+      "name": "大貫なぎさ",
+      "kana": "おおぬき なぎさ",
+      "group": "main",
+      "class": "B",
+      "sp": 1,
+      "portrait": false,
+      "bio": "1年B組(一之瀬クラス)の生徒。"
+    },
+    {
+      "id": "kobashi",
+      "name": "小橋夢",
+      "kana": "こばし ゆめ",
+      "group": "main",
+      "class": "B",
+      "sp": 1,
+      "portrait": false,
+      "bio": "1年B組(一之瀬クラス)の生徒。"
+    },
+    {
+      "id": "shiranami",
+      "name": "白波千尋",
+      "kana": "しらなみ ちひろ",
+      "group": "main",
+      "class": "B",
+      "sp": 1,
+      "portrait": false,
+      "bio": "一之瀬を慕う女子生徒のひとり。クラスの女子グループの中心的存在。"
+    },
+    {
+      "id": "tsube",
+      "name": "津辺仁美",
+      "kana": "つべ ひとみ",
+      "group": "main",
+      "class": "B",
+      "sp": 1,
+      "portrait": false,
+      "bio": "1年B組(一之瀬クラス)の生徒。"
+    },
+    {
+      "id": "ninomiya-y",
+      "name": "二宮唯",
+      "kana": "にのみや ゆい",
+      "group": "main",
+      "class": "B",
+      "sp": 1,
+      "portrait": false,
+      "bio": "1年B組(一之瀬クラス)の生徒。"
+    },
+    {
+      "id": "hatsukawa",
+      "name": "初川舞峰",
+      "kana": "",
+      "group": "main",
+      "class": "B",
+      "sp": 1,
+      "portrait": false,
+      "bio": "1年B組(一之瀬クラス)の生徒。"
+    },
+    {
+      "id": "himeno",
+      "name": "姫野ユキ",
+      "kana": "ひめの ゆき",
+      "group": "main",
+      "class": "B",
+      "sp": 1,
+      "portrait": false,
+      "bio": "一之瀬クラスの女子。長らく目立たない存在だったが、2年生編の終盤でクラスの行く末を左右する重要な立場として浮上する。"
+    },
+    {
+      "id": "minakata",
+      "name": "南方こずえ",
+      "kana": "みなかた こずえ",
+      "group": "main",
+      "class": "B",
+      "sp": 1,
+      "portrait": false,
+      "bio": "1年B組(一之瀬クラス)の生徒。"
+    },
+    {
+      "id": "yamagata",
+      "name": "山形ひな",
+      "kana": "やまがた ひな",
+      "group": "main",
+      "class": "B",
+      "sp": 1,
+      "portrait": false,
+      "bio": "1年B組(一之瀬クラス)の生徒。"
+    },
+    {
+      "id": "oda",
+      "name": "小田拓海",
+      "kana": "おだ たくみ",
+      "group": "main",
+      "class": "C",
+      "sp": 1,
+      "portrait": false,
+      "bio": "1年C組(龍園クラス)の生徒。"
+    },
+    {
+      "id": "komiya",
+      "name": "小宮叶吾",
+      "kana": "こみや きょうご",
+      "group": "main",
+      "class": "C",
+      "sp": 1,
+      "portrait": false,
+      "bio": "サッカー部所属の男子。2年生の無人島試験で木下と共に負傷する事件に巻き込まれ、その真相は学年を跨いで尾を引くことになる。"
+    },
+    {
+      "id": "kondo-r",
+      "name": "近藤玲音",
+      "kana": "こんどう れおん",
+      "group": "main",
+      "class": "C",
+      "sp": 1,
+      "portrait": false,
+      "bio": "1年C組(龍園クラス)の生徒。"
+    },
+    {
+      "id": "sakazaki",
+      "name": "坂崎",
+      "kana": "さかざき",
+      "group": "main",
+      "class": "C",
+      "sp": 1,
+      "portrait": false,
+      "bio": "1年C組(龍園クラス)の生徒。"
+    },
+    {
+      "id": "suzuki-h",
+      "name": "鈴木英俊",
+      "kana": "すずき ひでとし",
+      "group": "main",
+      "class": "C",
+      "sp": 1,
+      "portrait": false,
+      "bio": "1年C組(龍園クラス)の生徒。"
+    },
+    {
+      "id": "sonoda-m",
+      "name": "園田正志",
+      "kana": "そのだ まさし",
+      "group": "main",
+      "class": "C",
+      "sp": 1,
+      "portrait": false,
+      "bio": "1年C組(龍園クラス)の生徒。"
+    },
+    {
+      "id": "tokito-h",
+      "name": "時任裕也",
+      "kana": "ときとう ひろや",
+      "group": "main",
+      "class": "C",
+      "sp": 1,
+      "portrait": false,
+      "bio": "龍園クラスの男子。恐怖支配の時代から龍園のやり方に複雑な感情を抱えている。"
+    },
+    {
+      "id": "nakaizumi",
+      "name": "中泉昌平",
+      "kana": "なかいずみ しょうへい",
+      "group": "main",
+      "class": "C",
+      "sp": 1,
+      "portrait": false,
+      "bio": "1年C組(龍園クラス)の生徒。"
+    },
+    {
+      "id": "nomura",
+      "name": "野村雄二",
+      "kana": "のむら ゆうじ",
+      "group": "main",
+      "class": "C",
+      "sp": 1,
+      "portrait": false,
+      "bio": "1年C組(龍園クラス)の生徒。"
+    },
+    {
+      "id": "yano-c",
+      "name": "矢野",
+      "kana": "やの",
+      "group": "main",
+      "class": "C",
+      "sp": 1,
+      "portrait": false,
+      "bio": "1年C組(龍園クラス)の生徒。"
+    },
+    {
+      "id": "yamawaki",
+      "name": "山脇",
+      "kana": "やまわき",
+      "group": "main",
+      "class": "C",
+      "sp": 1,
+      "portrait": false,
+      "bio": "1年C組(龍園クラス)の生徒。"
+    },
+    {
+      "id": "yoshimoto",
+      "name": "吉本功節",
+      "kana": "",
+      "group": "main",
+      "class": "C",
+      "sp": 1,
+      "portrait": false,
+      "bio": "1年C組(龍園クラス)の生徒。"
+    },
+    {
+      "id": "asagaya",
+      "name": "阿佐ヶ谷舞",
+      "kana": "あさがや まい",
+      "group": "main",
+      "class": "C",
+      "sp": 1,
+      "portrait": false,
+      "bio": "1年C組(龍園クラス)の生徒。"
+    },
+    {
+      "id": "isoyama",
+      "name": "磯山渚沙",
+      "kana": "",
+      "group": "main",
+      "class": "C",
+      "sp": 1,
+      "portrait": false,
+      "bio": "1年C組(龍園クラス)の生徒。"
+    },
+    {
+      "id": "inoue-t",
+      "name": "井上都亞",
+      "kana": "",
+      "group": "main",
+      "class": "C",
+      "sp": 1,
+      "portrait": false,
+      "bio": "1年C組(龍園クラス)の生徒。"
+    },
+    {
+      "id": "okabe",
+      "name": "岡部ふゆ",
+      "kana": "おかべ ふゆ",
+      "group": "main",
+      "class": "C",
+      "sp": 1,
+      "portrait": false,
+      "bio": "1年C組(龍園クラス)の生徒。"
+    },
+    {
+      "id": "kinoshita",
+      "name": "木下美野里",
+      "kana": "きのした みのり",
+      "group": "main",
+      "class": "C",
+      "sp": 1,
+      "portrait": false,
+      "bio": "2年生の無人島試験で小宮と共に負傷した女子生徒。この「転落事件」の真相は後の学年を通じて大きな意味を持つ。"
+    },
+    {
+      "id": "suzuhira",
+      "name": "鈴平美羽",
+      "kana": "すずひら みう",
+      "group": "main",
+      "class": "C",
+      "sp": 1,
+      "portrait": false,
+      "bio": "1年C組(龍園クラス)の生徒。"
+    },
+    {
+      "id": "sumikura",
+      "name": "角倉真美",
+      "kana": "すみくら まみ",
+      "group": "main",
+      "class": "C",
+      "sp": 1,
+      "portrait": false,
+      "bio": "1年C組(龍園クラス)の生徒。"
+    },
+    {
+      "id": "takarajima",
+      "name": "宝島みこ",
+      "kana": "たからじま みこ",
+      "group": "main",
+      "class": "C",
+      "sp": 1,
+      "portrait": false,
+      "bio": "1年C組(龍園クラス)の生徒。"
+    },
+    {
+      "id": "nishino",
+      "name": "西野武子",
+      "kana": "にしの たけこ",
+      "group": "main",
+      "class": "C",
+      "sp": 1,
+      "portrait": false,
+      "bio": "気の強い龍園クラスの女子。歯に衣着せぬ物言いで、2年生編以降は綾小路とも接点を持つ。"
+    },
+    {
+      "id": "hatate",
+      "name": "旗手薫",
+      "kana": "はたて かおる",
+      "group": "main",
+      "class": "C",
+      "sp": 1,
+      "portrait": false,
+      "bio": "1年C組(龍園クラス)の生徒。"
+    },
+    {
+      "id": "fujisaki",
+      "name": "藤崎稟菜",
+      "kana": "",
+      "group": "main",
+      "class": "C",
+      "sp": 1,
+      "portrait": false,
+      "bio": "1年C組(龍園クラス)の生徒。"
+    },
+    {
+      "id": "manabe",
+      "name": "真鍋志保",
+      "kana": "まなべ しほ",
+      "group": "main",
+      "class": "C",
+      "sp": 1,
+      "portrait": false,
+      "bio": "女子グループのリーダー格。1年生の頃、軽井沢との因縁で騒動を起こした。"
+    },
+    {
+      "id": "morofuji",
+      "name": "諸藤リカ",
+      "kana": "もろふじ りか",
+      "group": "main",
+      "class": "C",
+      "sp": 1,
+      "portrait": false,
+      "bio": "1年C組(龍園クラス)の生徒。"
+    },
+    {
+      "id": "yajima",
+      "name": "矢島麻里子",
+      "kana": "やじま まりこ",
+      "group": "main",
+      "class": "C",
+      "sp": 1,
+      "portrait": false,
+      "bio": "1年C組(龍園クラス)の生徒。"
+    },
+    {
+      "id": "yabu",
+      "name": "藪菜々美",
+      "kana": "やぶ ななみ",
+      "group": "main",
+      "class": "C",
+      "sp": 1,
+      "portrait": false,
+      "bio": "真鍋グループの一員として軽井沢との騒動に関わった女子。"
+    },
+    {
+      "id": "yamaga",
+      "name": "山鹿",
+      "kana": "やまが",
+      "group": "main",
+      "class": "C",
+      "sp": 1,
+      "portrait": false,
+      "bio": "1年C組(龍園クラス)の生徒。"
+    },
+    {
+      "id": "yamashita-s",
+      "name": "山下沙希",
+      "kana": "やました さき",
+      "group": "main",
+      "class": "C",
+      "sp": 1,
+      "portrait": false,
+      "bio": "1年C組(龍園クラス)の生徒。"
+    },
+    {
+      "id": "yube",
+      "name": "夕部よしか",
+      "kana": "ゆうべ よしか",
+      "group": "main",
+      "class": "C",
+      "sp": 1,
+      "portrait": false,
+      "bio": "1年C組(龍園クラス)の生徒。"
+    },
+    {
+      "id": "ijuin",
+      "name": "伊集院航",
+      "kana": "",
+      "group": "main",
+      "class": "D",
+      "sp": 1,
+      "portrait": false,
+      "bio": "1年D組(堀北・綾小路クラス)の生徒。"
+    },
+    {
+      "id": "onizuka",
+      "name": "鬼塚武蔵",
+      "kana": "おにづか むさし",
+      "group": "main",
+      "class": "D",
+      "sp": 1,
+      "portrait": false,
+      "bio": "1年D組(堀北・綾小路クラス)の生徒。"
+    },
+    {
+      "id": "okitani",
+      "name": "沖谷京介",
+      "kana": "おきたに きょうすけ",
+      "group": "main",
+      "class": "D",
+      "sp": 1,
+      "portrait": false,
+      "bio": "温和で聞き上手な男子。クラスの縁の下を支える良心のひとり。"
+    },
+    {
+      "id": "kikuchi",
+      "name": "菊地永太",
+      "kana": "",
+      "group": "main",
+      "class": "D",
+      "sp": 1,
+      "portrait": false,
+      "bio": "1年D組(堀北・綾小路クラス)の生徒。"
+    },
+    {
+      "id": "sotomura",
+      "name": "外村秀雄",
+      "kana": "そとむら ひでお",
+      "group": "main",
+      "class": "D",
+      "sp": 1,
+      "portrait": false,
+      "bio": "「博士」の愛称で呼ばれるサブカル好きの男子。データや知識の面でクラスに貢献する。"
+    },
+    {
+      "id": "hondo",
+      "name": "本堂遼太郎",
+      "kana": "ほんどう りょうたろう",
+      "group": "main",
+      "class": "D",
+      "sp": 1,
+      "portrait": false,
+      "bio": "池・山内らとつるむお調子者トリオ周辺のムードメーカー。"
+    },
+    {
+      "id": "makita",
+      "name": "牧田進",
+      "kana": "",
+      "group": "main",
+      "class": "D",
+      "sp": 1,
+      "portrait": false,
+      "bio": "1年D組(堀北・綾小路クラス)の生徒。"
+    },
+    {
+      "id": "minami-s",
+      "name": "南節也",
+      "kana": "",
+      "group": "main",
+      "class": "D",
+      "sp": 1,
+      "portrait": false,
+      "bio": "1年D組(堀北・綾小路クラス)の生徒。"
+    },
+    {
+      "id": "minami-n",
+      "name": "南伯夫",
+      "kana": "",
+      "group": "main",
+      "class": "D",
+      "sp": 1,
+      "portrait": false,
+      "bio": "1年D組(堀北・綾小路クラス)の生徒。"
+    },
+    {
+      "id": "miyamoto",
+      "name": "宮本蒼士",
+      "kana": "みやもと そうし",
+      "group": "main",
+      "class": "D",
+      "sp": 1,
+      "portrait": false,
+      "bio": "1年D組(堀北・綾小路クラス)の生徒。"
+    },
+    {
+      "id": "azuma",
+      "name": "東咲菜",
+      "kana": "",
+      "group": "main",
+      "class": "D",
+      "sp": 1,
+      "portrait": false,
+      "bio": "1年D組(堀北・綾小路クラス)の生徒。"
+    },
+    {
+      "id": "ishikura-k",
+      "name": "石倉賀代子",
+      "kana": "",
+      "group": "main",
+      "class": "D",
+      "sp": 1,
+      "portrait": false,
+      "bio": "1年D組(堀北・綾小路クラス)の生徒。"
+    },
+    {
+      "id": "ichihashi",
+      "name": "市橋瑠璃",
+      "kana": "",
+      "group": "main",
+      "class": "D",
+      "sp": 1,
+      "portrait": false,
+      "bio": "1年D組(堀北・綾小路クラス)の生徒。"
+    },
+    {
+      "id": "inogashira",
+      "name": "井の頭心",
+      "kana": "いのがしら こころ",
+      "group": "main",
+      "class": "D",
+      "sp": 1,
+      "portrait": false,
+      "bio": "極度に内気な女子。体育祭では篠原たちに支えられながら奮闘した。"
+    },
+    {
+      "id": "sonoda-c",
+      "name": "園田千代",
+      "kana": "",
+      "group": "main",
+      "class": "D",
+      "sp": 1,
+      "portrait": false,
+      "bio": "1年D組(堀北・綾小路クラス)の生徒。"
+    },
+    {
+      "id": "nishimura-r",
+      "name": "西村竜子",
+      "kana": "にしむら りゅうこ",
+      "group": "main",
+      "class": "D",
+      "sp": 1,
+      "portrait": false,
+      "bio": "1年D組(堀北・綾小路クラス)の生徒。"
+    },
+    {
+      "id": "maezono",
+      "name": "前園杏",
+      "kana": "",
+      "group": "main",
+      "class": "D",
+      "sp": 1,
+      "portrait": false,
+      "bio": "篠原と仲の良い女子グループの一員。"
+    },
+    {
+      "id": "mori-n",
+      "name": "森寧々",
+      "kana": "もり ねね",
+      "group": "main",
+      "class": "D",
+      "sp": 1,
+      "portrait": false,
+      "bio": "1年D組(堀北・綾小路クラス)の生徒。"
+    },
+    {
+      "id": "kiryuin",
+      "name": "鬼龍院楓花",
+      "kana": "きりゅういん ふうか",
+      "group": "senior",
+      "class": null,
+      "sp": 17,
+      "portrait": false,
+      "bio": "南雲学年で唯一、学力・身体能力ともにA+評価を受ける孤高の才媛。クラス間の争いにもポイントにも興味を示さず、単独行動を貫く。2年生の無人島試験を機に綾小路と奇妙な交流を持つ。",
+      "oaa": {
+        "academic": [
+          "A+",
+          97
+        ],
+        "physical": [
+          "A+",
+          95
+        ],
+        "adapt": [
+          "A-",
+          85
+        ],
+        "social": [
+          "D",
+          35
+        ]
+      }
+    },
+    {
+      "id": "kiriyama",
+      "name": "桐山生叶",
+      "kana": "きりやま いくと",
+      "group": "senior",
+      "class": null,
+      "sp": 15,
+      "portrait": false,
+      "bio": "生徒会副会長。かつてはAクラスを率いていたが、南雲のクラスに敗れて転落した。南雲体制への対抗心を秘めており、綾小路に接触する。"
+    },
+    {
+      "id": "igari",
+      "name": "猪狩桃子",
+      "kana": "",
+      "group": "senior",
+      "class": null,
+      "sp": 10,
+      "portrait": false,
+      "bio": "堀北学の学年の3年Bクラスを率いた女子生徒。"
+    },
+    {
+      "id": "ayase",
+      "name": "綾瀬夏",
+      "kana": "",
+      "group": "senior",
+      "class": null,
+      "sp": 10,
+      "portrait": false,
+      "bio": "堀北学の学年の3年Cクラスを率いた生徒。"
+    },
+    {
+      "id": "ninomiya-k",
+      "name": "二宮倉之助",
+      "kana": "",
+      "group": "senior",
+      "class": null,
+      "sp": 10,
+      "portrait": false,
+      "bio": "堀北学の学年、3年Cクラスの生徒。"
+    },
+    {
+      "id": "enokishima",
+      "name": "榎嶋翠子",
+      "kana": "",
+      "group": "senior",
+      "class": null,
+      "sp": 15,
+      "portrait": false,
+      "bio": "南雲学年、桐山クラスの女子生徒。"
+    },
+    {
+      "id": "tachibana-k",
+      "name": "立花賢人",
+      "kana": "",
+      "group": "senior",
+      "class": null,
+      "sp": 15,
+      "portrait": false,
+      "bio": "南雲学年、Dクラスの生徒。"
+    },
+    {
+      "id": "yamanaka-i",
+      "name": "山中郁子",
+      "kana": "",
+      "group": "senior",
+      "class": null,
+      "sp": 15,
+      "portrait": false,
+      "bio": "南雲学年、Dクラスの女子生徒。"
+    },
+    {
+      "id": "suchi",
+      "name": "須知萌香",
+      "kana": "",
+      "group": "senior",
+      "class": null,
+      "sp": 15,
+      "portrait": false,
+      "bio": "南雲学年、Cクラスの女子生徒。"
+    },
+    {
+      "id": "ishigami",
+      "name": "石上京",
+      "kana": "いしがみ きょう",
+      "group": "junior",
+      "class": null,
+      "sp": 23,
+      "portrait": true,
+      "bio": "綾小路たちの1学年下、Aクラス(石上クラス)のリーダー。運動は苦手で消極的だが学力は突出しており、綾小路の過去を知る謎多き人物。",
+      "oaaHist": [
+        {
+          "era": "3年生編開始時点",
+          "sp": 30,
+          "academic": [
+            "A",
+            95
+          ],
+          "physical": [
+            "D-",
+            24
+          ],
+          "adapt": [
+            "B+",
+            80
+          ],
+          "social": [
+            "D+",
+            39
+          ],
+          "overall": [
+            "B-",
+            62
+          ]
+        }
+      ]
+    },
+    {
+      "id": "utomiya",
+      "name": "宇都宮陸",
+      "kana": "うとみや りく",
+      "group": "junior",
+      "class": null,
+      "sp": 15,
+      "portrait": true,
+      "bio": "1学年下Cクラス(宇都宮クラス)のリーダー格。武闘派で身体能力が高く、1年時は椿と共に綾小路退学の裏試験に協力していた。敬語が苦手でついタメ口になってしまう。",
+      "oaaHist": [
+        {
+          "era": "3年生編開始時点",
+          "sp": 30,
+          "academic": [
+            "B",
+            74
+          ],
+          "physical": [
+            "A",
+            88
+          ],
+          "adapt": [
+            "C",
+            54
+          ],
+          "social": [
+            "B-",
+            61
+          ],
+          "overall": [
+            "B",
+            70
+          ]
+        }
+      ]
+    },
+    {
+      "id": "takahashi-o",
+      "name": "高橋修",
+      "kana": "たかはし おさむ",
+      "group": "junior",
+      "class": null,
+      "sp": 15,
+      "portrait": false,
+      "bio": "綾小路たちの1学年下の生徒。"
+    },
+    {
+      "id": "kurihara",
+      "name": "栗原春日",
+      "kana": "",
+      "group": "junior",
+      "class": null,
+      "sp": 15,
+      "portrait": false,
+      "bio": "綾小路たちの1学年下の生徒。"
+    },
+    {
+      "id": "konishi",
+      "name": "小西徹子",
+      "kana": "",
+      "group": "junior",
+      "class": null,
+      "sp": 15,
+      "portrait": false,
+      "bio": "綾小路たちの1学年下の生徒。"
+    },
+    {
+      "id": "mitsui",
+      "name": "三井あゆみ",
+      "kana": "みつい あゆみ",
+      "group": "junior",
+      "class": null,
+      "sp": 15,
+      "portrait": false,
+      "bio": "綾小路たちの1学年下の生徒。"
+    },
+    {
+      "id": "dojo",
+      "name": "堂上美津子",
+      "kana": "",
+      "group": "junior",
+      "class": null,
+      "sp": 15,
+      "portrait": false,
+      "bio": "綾小路たちの1学年下の生徒。"
+    },
+    {
+      "id": "kurachi",
+      "name": "倉地直広",
+      "kana": "くらち なおひろ",
+      "group": "junior",
+      "class": null,
+      "sp": 15,
+      "portrait": false,
+      "bio": "綾小路たちの1学年下の生徒。"
+    },
+    {
+      "id": "makita-t",
+      "name": "巻田高茂",
+      "kana": "",
+      "group": "junior",
+      "class": null,
+      "sp": 15,
+      "portrait": false,
+      "bio": "綾小路たちの1学年下の生徒。"
+    },
+    {
+      "id": "sakagami",
+      "name": "坂上数馬",
+      "kana": "さかがみ かずま",
+      "group": "staff",
+      "class": "C",
+      "sp": 1,
+      "portrait": false,
+      "bio": "Cクラス(龍園クラス)の担任教師。担当クラスの成績を第一に考える現実主義者で、結果を出す限り龍園たちの強引なやり方も黙認してきた。"
+    },
+    {
+      "id": "shiba",
+      "name": "司馬克典",
+      "kana": "しば かつのり",
+      "group": "staff",
+      "class": null,
+      "sp": 15,
+      "portrait": false,
+      "bio": "綾小路たちの1学年下、Dクラス(宝泉クラス)の担任教師。屈強な体躯の持ち主で、その経歴には不透明な部分が多い。"
+    },
+    {
+      "id": "atsuomi",
+      "name": "綾小路篤臣",
+      "kana": "あやのこうじ あつおみ",
+      "group": "staff",
+      "class": null,
+      "sp": 13,
+      "portrait": false,
+      "bio": "清隆の父。政財界に強大な影響力を持つホワイトルームの主宰者で、「最高傑作」である清隆を施設へ連れ戻すことに執着する。月城を学校へ送り込んだ張本人。"
     }
   ]
 }
