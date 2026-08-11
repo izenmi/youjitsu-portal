@@ -51,20 +51,36 @@ const spLabel = (sp: number) => timeline.volumes.find((v) => v.ord === sp)?.labe
     <p class="bio">{s.bio}</p>
   </div>
 
-  {s.oaa && (
+  {'oaaHist' in s && s.oaaHist ? (
     <section>
-      <h2 class="section-title">OAA 能力データ<small class="muted">(管理人推定を含む)</small></h2>
+      <h2 class="section-title">OAA 能力データ<small class="muted">(公式サイト掲載値)</small></h2>
       <div class="oaa-wrap">
-        <div class="card oaa-card">
-          <h3>公式評価{'oaaTrue' in s && s.oaaTrue ? '(表向き)' : ''}</h3>
-          <RadarChart values={radarValues(s.oaa)} />
-        </div>
+        {s.oaaHist.map((h: any) => (
+          <div class="card oaa-card" data-sp={h.sp >= 30 ? h.sp : undefined} data-sp-label={spLabel(h.sp)}>
+            <h3>{h.era}</h3>
+            <RadarChart values={radarValues(h)} />
+            {h.overall && (
+              <p class="overall">総合 <b class="rank" data-rank={h.overall[0]}>{h.overall[0]}</b> <span class="muted">({h.overall[1]})</span></p>
+            )}
+          </div>
+        ))}
         {'oaaTrue' in s && s.oaaTrue && (
           <div class="card oaa-card" data-sp="8" data-sp-label="1年生編7巻">
             <h3>真の実力(ネタバレ)</h3>
             <RadarChart values={radarValues(s.oaaTrue)} />
           </div>
         )}
+      </div>
+      <p class="muted oaa-src">出典: MF文庫J『よう実』2年生編/3年生編 公式サイトのOAAデータ。読了位置が3年生編に達すると最新値が表示されます。</p>
+    </section>
+  ) : 'oaa' in s && s.oaa && (
+    <section>
+      <h2 class="section-title">OAA 能力データ<small class="muted">(管理人推定)</small></h2>
+      <div class="oaa-wrap">
+        <div class="card oaa-card">
+          <h3>推定値</h3>
+          <RadarChart values={radarValues(s.oaa)} />
+        </div>
       </div>
     </section>
   )}
@@ -122,6 +138,8 @@ const spLabel = (sp: number) => timeline.volumes.find((v) => v.ord === sp)?.labe
     .oaa-wrap { display: flex; gap: 14px; flex-wrap: wrap; }
     .oaa-card { padding: 14px 18px; }
     .oaa-card h3 { margin: 0 0 4px; font-size: 0.95rem; color: var(--ink-2); }
+    .overall { margin: 4px 0 0; font-size: 0.9rem; text-align: center; }
+    .oaa-src { font-size: 0.78rem; margin-top: 10px; }
     .notes { list-style: none; padding: 0; display: grid; gap: 10px; }
     .note-item { padding: 12px 14px; display: flex; gap: 12px; align-items: baseline; }
     .note-vol {

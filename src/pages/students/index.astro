@@ -19,11 +19,12 @@ const otherSections = [
 ];
 const mainOf = (cls: string) => students.filter((s) => s.group === 'main' && s.class === cls);
 const groupOf = (g: string) => students.filter((s) => s.group === g);
+const miniOaa = (s: any) => s.oaaHist?.[0] ?? s.oaa;
 ---
 
 <Base title="生徒名鑑" description="OAA風レーダーチャート付きのキャラクター名鑑。クラス別・学年別に全キャラを収録。">
   <h1>🎓 生徒名鑑 <small class="muted">OAA - 学力至上主義データベース</small></h1>
-  <p class="muted">能力値は2年生編開始時点の描写を基にした管理人推定です。カードをタップすると詳細データを閲覧できます。</p>
+  <p class="muted">能力値はMF文庫J公式サイト掲載のOAA公式データです(2年生編開始時点。未掲載キャラのみ管理人推定)。カードをタップすると詳細データを閲覧できます。</p>
 
   <div class="toolbar card">
     <input id="q" type="search" placeholder="名前・かなで検索" />
@@ -56,10 +57,10 @@ const groupOf = (g: string) => students.filter((s) => s.group === g);
               <div class="student-meta">
                 <strong>{s.name}</strong>
                 <small class="muted">{s.kana}</small>
-                {s.oaa && (
+                {miniOaa(s) && (
                   <div class="mini-oaa">
-                    <span>学 <b class="rank" data-rank={s.oaa.academic[0]}>{s.oaa.academic[0]}</b></span>
-                    <span>身 <b class="rank" data-rank={s.oaa.physical[0]}>{s.oaa.physical[0]}</b></span>
+                    <span>学 <b class="rank" data-rank={miniOaa(s).academic[0]}>{miniOaa(s).academic[0]}</b></span>
+                    <span>身 <b class="rank" data-rank={miniOaa(s).physical[0]}>{miniOaa(s).physical[0]}</b></span>
                   </div>
                 )}
               </div>
