@@ -11,11 +11,18 @@ const pickup = ['ayanokoji', 'horikita', 'ichinose', 'ryuen', 'sakayanagi', 'kar
 
 const sections = [
   { href: `${base}students/`, icon: '🎓', title: '生徒名鑑', desc: 'OAA風レーダーチャート付きの全キャラデータベース' },
+  { href: `${base}relations/`, icon: '🕸️', title: '人物相関図', desc: '読了位置で変化するインタラクティブ相関図' },
+  { href: `${base}ranking/`, icon: '🏆', title: 'OAAランキング', desc: '公式数値による能力別ランキングと成長率' },
   { href: `${base}exams/`, icon: '📋', title: '特別試験アーカイブ', desc: '歴代特別試験のルールと結果を年表で辿る' },
   { href: `${base}points/`, icon: '📈', title: 'クラスポイント推移', desc: '4クラスの攻防をグラフで可視化' },
+  { href: `${base}taiken/`, icon: '🎭', title: '特別試験を体験', desc: '満場一致特別試験を一人称で体験するADV' },
   { href: `${base}quiz/`, icon: '✏️', title: '原作知識クイズ', desc: '難易度3段階×10問であなたの読み込み度を測定' },
   { href: `${base}shindan/`, icon: '🧭', title: 'クラス適性診断', desc: 'あなたが入学したらどのクラス?' },
+  { href: `${base}birthdays/`, icon: '🎂', title: '誕生日カレンダー', desc: '公式誕生日を月別カレンダーで' },
 ];
+const bdayList = students.students
+  .filter((s: any) => s.birthday)
+  .map((s: any) => ({ b: s.birthday, n: s.name, sp: s.sp }));
 ---
 
 <Base>
@@ -43,6 +50,26 @@ const sections = [
       ))}
     </div>
   </section>
+
+  <div id="home-bday" class="card home-bday" hidden>
+    🎂 <strong>今日が誕生日:</strong> <span id="home-bday-names"></span>
+    <a href={`${base}birthdays/`} class="muted" style="font-size: 0.8rem;">カレンダーを見る →</a>
+  </div>
+
+  <script is:inline define:vars={{ bdayList }}>
+    const renderBday = () => {
+      const now = new Date();
+      const key = `${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+      const progress = window.ANHS ? window.ANHS.progress : 0;
+      const hits = bdayList.filter((x) => x.b === key && x.sp <= Math.max(progress, 1));
+      const box = document.getElementById('home-bday');
+      if (hits.length === 0) { box.hidden = true; return; }
+      document.getElementById('home-bday-names').textContent = hits.map((x) => x.n).join('、');
+      box.hidden = false;
+    };
+    document.addEventListener('anhs:progress', renderBday);
+    window.addEventListener('DOMContentLoaded', renderBday);
+  </script>
 
   <section>
     <h2 class="section-title">注目の生徒</h2>
@@ -109,6 +136,7 @@ const sections = [
     }
     .pickup-card:hover { border-color: var(--accent); }
     .standings-grid { grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); }
+    .home-bday { padding: 10px 16px; margin-top: 14px; font-size: 0.92rem; border-left: 4px solid var(--accent); }
   </style>
 
   <style is:global>

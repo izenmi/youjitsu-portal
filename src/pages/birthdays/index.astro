@@ -1,0 +1,91 @@
+---
+import Base from '../../layouts/Base.astro';
+import Portrait from '../../components/Portrait.astro';
+import data from '../../data/students.json';
+
+const base = import.meta.env.BASE_URL;
+const withBday = (data.students as any[])
+  .filter((s) => s.birthday)
+  .map((s) => ({ ...s, month: Number(s.birthday.split('-')[0]), day: Number(s.birthday.split('-')[1]) }));
+
+const months = Array.from({ length: 12 }, (_, i) => ({
+  m: i + 1,
+  list: withBday.filter((s) => s.month === i + 1).sort((a, b) => a.day - b.day),
+}));
+---
+
+<Base title="誕生日カレンダー" description="よう実キャラの公式誕生日を月別カレンダーで。今日が誕生日の生徒もチェック。">
+  <h1>🎂 誕生日カレンダー</h1>
+  <p class="muted">MF文庫J公式サイトに記載のある{withBday.length}名の誕生日を月別にまとめました。</p>
+
+  <div id="bd-today-card" class="card bd-today" hidden>
+    <h2>🎉 今日(<span id="bd-today-date"></span>)が誕生日</h2>
+    <div id="bd-today-list" class="bd-grid"></div>
+  </div>
+
+  <div class="bd-months">
+    {months.map((mo) => (
+      <section class="card bd-month">
+        <h2 class="bd-month-title">{mo.m}月</h2>
+        {mo.list.length === 0 ? (
+          <p class="muted bd-none">記載なし</p>
+        ) : (
+          <ul class="bd-list">
+            {mo.list.map((s) => (
+              <li data-sp={s.sp > 1 ? s.sp : undefined} data-sp-hide={s.sp > 1 ? '' : undefined} data-bday={s.birthday} data-name={s.name} data-id={s.id}>
+                <a href={`${base}students/${s.id}/`} class="bd-item">
+                  <span class="bd-day">{s.day}日</span>
+                  <Portrait id={s.portrait ? s.id : `sil-${s.id}`} size={34} classKey={s.class} />
+                  <span>{s.name}</span>
+                </a>
+              </li>
+            ))}
+          </ul>
+        )}
+      </section>
+    ))}
+  </div>
+
+  <script>
+    // 「今日が誕生日」: 表示中(非ネタバレ)の生徒だけ対象
+    const now = new Date();
+    const key = `${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+    const render = () => {
+      const hits = [...document.querySelectorAll<HTMLElement>(`[data-bday="${key}"]`)]
+        .filter((li) => !li.classList.contains('sp-hidden'));
+      const card = document.getElementById('bd-today-card')!;
+      if (hits.length === 0) { card.hidden = true; return; }
+      document.getElementById('bd-today-date')!.textContent = `${now.getMonth() + 1}月${now.getDate()}日`;
+      document.getElementById('bd-today-list')!.innerHTML = hits
+        .map((li) => `<span class="bd-today-name">🎈 ${li.dataset.name}</span>`)
+        .join('');
+      card.hidden = false;
+    };
+    document.addEventListener('anhs:progress', render);
+    window.addEventListener('DOMContentLoaded', render);
+  </script>
+
+  <style>
+    .bd-today { padding: 16px 20px; margin: 14px 0; border-top: 4px solid var(--accent); }
+    .bd-today h2 { margin: 0 0 8px; font-size: 1.05rem; }
+    .bd-months { display: grid; gap: 12px; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); }
+    .bd-month { padding: 14px 16px; }
+    .bd-month-title {
+      margin: 0 0 8px; font-size: 1rem; color: var(--accent);
+      border-bottom: 2px solid var(--accent-soft); padding-bottom: 4px;
+    }
+    .bd-none { font-size: 0.8rem; }
+    .bd-list { list-style: none; padding: 0; margin: 0; display: grid; gap: 4px; }
+    .bd-item {
+      display: flex; align-items: center; gap: 8px; text-decoration: none;
+      padding: 3px 6px; border-radius: 8px; font-size: 0.88rem;
+    }
+    .bd-item:hover { background: var(--surface-2); }
+    .bd-day { min-width: 3em; font-weight: 700; color: var(--ink-2); font-size: 0.8rem; }
+  </style>
+
+  <style is:global>
+    .bd-grid { display: flex; flex-wrap: wrap; gap: 10px; }
+    .bd-today-name { font-weight: 700; }
+  </style>
+</Base>

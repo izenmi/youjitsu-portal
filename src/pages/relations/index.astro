@@ -1,0 +1,123 @@
+---
+import Base from '../../layouts/Base.astro';
+import Portrait from '../../components/Portrait.astro';
+import rel from '../../data/relations.json';
+import data from '../../data/students.json';
+import timeline from '../../data/timeline.json';
+
+const base = import.meta.env.BASE_URL;
+const byId = Object.fromEntries((data.students as any[]).map((s) => [s.id, s]));
+const nodes = rel.nodes.map((n) => ({ ...n, s: byId[n.id] })).filter((n) => n.s);
+const spLabel = (sp: number) => timeline.volumes.find((v) => v.ord === sp)?.label ?? '';
+
+// クライアントへ渡す最小データ
+const clientNodes = Object.fromEntries(nodes.map((n) => [n.id, { x: n.x, y: n.y, sp: n.s.sp }]));
+---
+
+<Base title="人物相関図" description="よう実の人物相関図。読了位置に連動して関係が変化するインタラクティブマップ。">
+  <h1>🕸️ 人物相関図</h1>
+  <p class="muted">
+    読了位置(右上📖)を動かすと、関係線が物語の進行に合わせて現れたり消えたりします。
+    ポートレートをタップすると生徒詳細へ。線にカーソルを合わせると関係の説明が出ます。
+  </p>
+
+  <div class="card legend-card">
+    {Object.entries(rel.types).map(([key, t]: [string, any]) => (
+      <span class="legend-item">
+        <svg width="26" height="8"><line x1="0" y1="4" x2="26" y2="4" stroke={t.color} stroke-width={t.width} stroke-dasharray={t.dash} /></svg>
+        {t.label}
+      </span>
+    ))}
+  </div>
+
+  <div class="card rel-wrap">
+    <div class="rel-scroll">
+      <svg id="rel-svg" viewBox="0 0 1200 900" width="1200" role="img" aria-label="人物相関図">
+        <g id="rel-edges"></g>
+        {nodes.map((n) => (
+          <a href={`${base}students/${n.id}/`}>
+            <g
+              class="rel-node"
+              transform={`translate(${n.x - 32}, ${n.y - 32})`}
+              data-sp={n.s.sp > 1 ? n.s.sp : undefined}
+              data-sp-hide={n.s.sp > 1 ? '' : undefined}
+              data-sp-label={n.s.sp > 1 ? spLabel(n.s.sp) : undefined}
+            >
+              <Portrait id={n.s.portrait ? n.id : `sil-${n.id}`} size={64} classKey={n.s.class} />
+              <text x="32" y="82" text-anchor="middle" font-size="13" font-weight="700" fill="var(--ink)">{n.s.name}</text>
+            </g>
+          </a>
+        ))}
+      </svg>
+    </div>
+  </div>
+  <p class="muted" style="font-size: 0.8rem;">
+    ※主要人物のみ掲載。関係の解釈は管理人によるものです。横にスクロールできます。
+  </p>
+
+  <script is:inline define:vars={{ edges: rel.edges, types: rel.types, clientNodes }}>
+    const NS = 'http://www.w3.org/2000/svg';
+    const layer = document.getElementById('rel-edges');
+
+    const draw = () => {
+      const p = window.ANHS ? window.ANHS.progress : 0;
+      layer.innerHTML = '';
+      // 同一ペアの複数関係をオフセットして重ならないように
+      const pairCount = {};
+      edges.forEach((e) => {
+        const na = clientNodes[e.a], nb = clientNodes[e.b];
+        if (!na || !nb) return;
+        const visible = e.sp <= p && p < (e.endSp ?? Infinity) && na.sp <= Math.max(p, 1) && nb.sp <= Math.max(p, 1);
+        if (!visible) return;
+        const t = types[e.type];
+        const key = [e.a, e.b].sort().join('|');
+        const idx = pairCount[key] ?? 0;
+        pairCount[key] = idx + 1;
+        // 中点を法線方向に少しずらした2次ベジェで重複回避
+        const mx = (na.x + nb.x) / 2, my = (na.y + nb.y) / 2;
+        const dx = nb.x - na.x, dy = nb.y - na.y;
+        const len = Math.hypot(dx, dy) || 1;
+        const off = idx * 14;
+        const cx = mx - (dy / len) * off, cy = my + (dx / len) * off;
+        const path = document.createElementNS(NS, 'path');
+        path.setAttribute('d', `M${na.x},${na.y} Q${cx},${cy} ${nb.x},${nb.y}`);
+        path.setAttribute('fill', 'none');
+        path.setAttribute('stroke', t.color);
+        path.setAttribute('stroke-width', t.width);
+        if (t.dash) path.setAttribute('stroke-dasharray', t.dash);
+        path.setAttribute('opacity', '0.75');
+        const tip = document.createElementNS(NS, 'title');
+        tip.textContent = `${e.label}`;
+        path.appendChild(tip);
+        layer.appendChild(path);
+        // ラベル(中点)
+        const text = document.createElementNS(NS, 'text');
+        text.setAttribute('x', cx);
+        text.setAttribute('y', cy - 4);
+        text.setAttribute('text-anchor', 'middle');
+        text.setAttribute('font-size', '10.5');
+        text.setAttribute('fill', t.color);
+        text.setAttribute('paint-order', 'stroke');
+        text.setAttribute('stroke', 'var(--surface)');
+        text.setAttribute('stroke-width', '3');
+        text.textContent = e.label;
+        layer.appendChild(text);
+      });
+    };
+    document.addEventListener('anhs:progress', draw);
+    window.addEventListener('DOMContentLoaded', draw);
+  </script>
+
+  <style>
+    .legend-card {
+      display: flex; flex-wrap: wrap; gap: 14px;
+      padding: 10px 16px; margin: 12px 0; font-size: 0.8rem;
+    }
+    .legend-item { display: inline-flex; align-items: center; gap: 6px; }
+    .rel-wrap { padding: 8px; }
+    .rel-scroll { overflow-x: auto; }
+    #rel-svg { display: block; min-width: 900px; width: 100%; height: auto; }
+    .rel-node { cursor: pointer; }
+    .rel-node:hover text { fill: var(--accent); }
+  </style>
+</Base>

@@ -1,0 +1,113 @@
+---
+import Base from '../../layouts/Base.astro';
+import taiken from '../../data/taiken.json';
+---
+
+<Base title="特別試験を体験" description="満場一致特別試験を一人称で体験する選択肢式アドベンチャー。あなたの選択で結末が変わる。">
+  <h1>🎭 特別試験を体験</h1>
+  <p class="muted">
+    もしあなたがあの教室にいたら、どのボタンを押しますか?
+    選択の積み重ねで、あなたの「タイプ」が判定されます。
+  </p>
+
+  <div data-sp-count>
+    <p class="sp-note"></p>
+    <div data-sp="20" data-sp-label="2年生編5巻">
+      <div id="tk-start" class="card panel">
+        <h2>{taiken.title}</h2>
+        <p style="font-size: 0.95rem;">{taiken.intro}</p>
+        <p class="muted" style="font-size: 0.8rem;">
+          ⚠ このシナリオは2年生編5巻の特別試験を題材にしています(結末は原作と異なる場合があります)。
+        </p>
+        <button id="tk-begin" class="primary-btn">試験を開始する</button>
+      </div>
+
+      <div id="tk-play" class="card panel" hidden>
+        <p class="progress-line"><span id="tk-num"></span></p>
+        <p id="tk-text" class="tk-text"></p>
+        <div id="tk-choices" class="choices"></div>
+      </div>
+
+      <div id="tk-end" class="panel" hidden>
+        <div class="card oaa-result">
+          <span class="oaa-app-tag">特別試験 適性判定</span>
+          <div class="verdict">
+            <div class="verdict-rank rank" id="tk-grade" data-rank="B">B</div>
+            <div>
+              <h2 id="tk-title" style="margin: 0;"></h2>
+            </div>
+          </div>
+          <p id="tk-result" style="font-size: 0.92rem;"></p>
+          <p class="muted" style="font-size: 0.82rem;">{taiken.epilogue}</p>
+        </div>
+        <div class="end-actions" style="margin-top: 14px;">
+          <button id="tk-retry" class="primary-btn">もう一度挑戦する</button>
+          <a id="tk-share" class="share-btn" target="_blank" rel="noopener">結果をXでシェア</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script is:inline define:vars={{ taiken }}>
+    const $ = (id) => document.getElementById(id);
+    const scenes = Object.fromEntries(taiken.scenes.map((s) => [s.id, s]));
+    let flags = {};
+    let step = 0;
+
+    const show = (panel) => {
+      ['tk-start', 'tk-play', 'tk-end'].forEach((id) => ($(id).hidden = id !== panel));
+    };
+
+    const renderScene = (id) => {
+      const sc = scenes[id];
+      step++;
+      $('tk-num').textContent = `場面 ${step}`;
+      $('tk-text').textContent = sc.text;
+      const box = $('tk-choices');
+      box.innerHTML = '';
+      sc.choices.forEach((c) => {
+        const b = document.createElement('button');
+        b.className = 'choice-btn';
+        b.textContent = c.t;
+        b.addEventListener('click', () => {
+          if (c.flag) flags[c.flag] = (flags[c.flag] ?? 0) + 1;
+          if (c.next === 'end') finish();
+          else renderScene(c.next);
+        });
+        box.appendChild(b);
+      });
+    };
+
+    const finish = () => {
+      const e =
+        taiken.endings.find((x) => x.cond !== 'default' && (flags[x.cond] ?? 0) >= x.min) ??
+        taiken.endings.find((x) => x.cond === 'default');
+      $('tk-grade').textContent = e.grade;
+      $('tk-grade').dataset.rank = e.grade;
+      $('tk-title').textContent = e.title;
+      $('tk-result').textContent = e.text;
+      const text = `満場一致特別試験を体験した結果…「${e.title}」(評価${e.grade})でした。あなたならどのボタンを押す? #よう実 #高育ポータル`;
+      $('tk-share').href = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(location.href)}`;
+      show('tk-end');
+    };
+
+    $('tk-begin').addEventListener('click', () => {
+      flags = {};
+      step = 0;
+      show('tk-play');
+      renderScene('s1');
+    });
+    $('tk-retry').addEventListener('click', () => show('tk-start'));
+  </script>
+
+  <style is:global>
+    .tk-text { font-size: 0.98rem; line-height: 1.9; }
+    .oaa-result { padding: 22px; border-top: 4px solid var(--accent); }
+    .oaa-app-tag {
+      font-size: 0.72rem; font-weight: 700; letter-spacing: 0.08em;
+      color: var(--ink-2); text-transform: uppercase;
+    }
+    .verdict { display: flex; gap: 16px; align-items: center; margin: 10px 0; }
+    .verdict-rank { font-size: 1.7rem; min-width: 1.9em; padding: 0.15em 0.3em; }
+  </style>
+</Base>

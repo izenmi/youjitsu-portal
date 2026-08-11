@@ -1,0 +1,169 @@
+---
+import Base from '../../layouts/Base.astro';
+import Portrait from '../../components/Portrait.astro';
+import data from '../../data/students.json';
+
+const base = import.meta.env.BASE_URL;
+
+type Snap = { era: string; sp: number; [k: string]: any };
+const students = data.students as any[];
+
+const AXES = [
+  ['academic', '学力'], ['physical', '身体能力'], ['adapt', '機転思考力'],
+  ['social', '社会貢献性'], ['overall', '総合'],
+] as const;
+
+const snapOf = (s: any, era: 'y2' | 'y3'): Snap | null =>
+  s.oaaHist?.find((h: Snap) => h.sp === (era === 'y2' ? 15 : 30)) ?? null;
+
+const top = (era: 'y2' | 'y3', key: string) =>
+  students
+    .map((s) => ({ s, snap: snapOf(s, era) }))
+    .filter((x) => x.snap && x.snap[key])
+    .sort((a, b) => b.snap![key][1] - a.snap![key][1])
+    .slice(0, 20);
+
+// 成長率: 総合の y3 - y2
+const growth = students
+  .map((s) => {
+    const a = snapOf(s, 'y2');
+    const b = snapOf(s, 'y3');
+    return a?.overall && b?.overall ? { s, from: a.overall, to: b.overall, diff: b.overall[1] - a.overall[1] } : null;
+  })
+  .filter(Boolean)
+  .sort((a, b) => b!.diff - a!.diff)
+  .slice(0, 20);
+
+const tables = [
+  ...(['y2', 'y3'] as const).flatMap((era) =>
+    AXES.map(([key, label]) => ({
+      id: `${era}-${key}`,
+      era,
+      title: `${label}ランキング`,
+      eraLabel: era === 'y2' ? '2年生編開始時点' : '3年生編開始時点',
+      rows: top(era, key).map((x, i) => ({
+        rank: i + 1, s: x.s, grade: x.snap![key][0], score: x.snap![key][1],
+      })),
+    }))
+  ),
+];
+---
+
+<Base title="OAAランキング" description="公式OAA数値による能力別ランキング。時点切替と成長率ランキングも。">
+  <h1>🏆 OAAランキング</h1>
+  <p class="muted">
+    MF文庫J公式サイト掲載のOAA数値による能力別ランキング(公式値のあるキャラのみ)。
+    3年生編時点と成長率は、読了位置が3年生編に達すると表示されます。
+  </p>
+
+  <div class="card panel">
+    <div class="rk-controls">
+      <div class="chips" id="rk-axis">
+        {AXES.map(([key, label], i) => (
+          <button class={`filter-chip${i === 0 ? ' active' : ''}`} data-axis={key}>{label}</button>
+        ))}
+        <button class="filter-chip" data-axis="growth">成長率</button>
+      </div>
+      <div class="chips" id="rk-era">
+        <button class="filter-chip active" data-era="y2">2年生編開始時点</button>
+        <button class="filter-chip" data-era="y3" data-sp="30">3年生編開始時点</button>
+      </div>
+    </div>
+  </div>
+
+  {tables.map((t) => (
+    <section
+      class="rk-table"
+      id={`rk-${t.id}`}
+      data-sp={t.era === 'y3' ? 30 : undefined}
+      data-sp-label="3年生編1巻"
+      hidden={t.id !== 'y2-academic'}
+    >
+      <h2 class="section-title">{t.title}<small class="muted">({t.eraLabel})</small></h2>
+      <ol class="rk-list">
+        {t.rows.map((r) => (
+          <li class={`card rk-row${r.rank <= 3 ? ' rk-top' : ''}`}>
+            <span class={`rk-rank rk-rank-${r.rank}`}>{r.rank}</span>
+            <Portrait id={r.s.portrait ? r.s.id : `sil-${r.s.id}`} size={40} classKey={r.s.class} />
+            <a href={`${base}students/${r.s.id}/`} class="rk-name">{r.s.name}</a>
+            {r.s.class && <span class="class-chip" data-class={r.s.class}>{r.s.class}</span>}
+            <b class="rank" data-rank={r.grade}>{r.grade}</b>
+            <span class="rk-score">{r.score}</span>
+          </li>
+        ))}
+      </ol>
+    </section>
+  ))}
+
+  <section class="rk-table" id="rk-growth" data-sp="30" data-sp-label="3年生編1巻" hidden>
+    <h2 class="section-title">成長率ランキング<small class="muted">(総合値: 2年生編開始→3年生編開始)</small></h2>
+    <ol class="rk-list">
+      {growth.map((g, i) => (
+        <li class={`card rk-row${i < 3 ? ' rk-top' : ''}`}>
+          <span class={`rk-rank rk-rank-${i + 1}`}>{i + 1}</span>
+          <Portrait id={g!.s.portrait ? g!.s.id : `sil-${g!.s.id}`} size={40} classKey={g!.s.class} />
+          <a href={`${base}students/${g!.s.id}/`} class="rk-name">{g!.s.name}</a>
+          {g!.s.class && <span class="class-chip" data-class={g!.s.class}>{g!.s.class}</span>}
+          <span class="rk-growth-detail muted">
+            <b class="rank" data-rank={g!.from[0]}>{g!.from[0]}</b>({g!.from[1]}) →
+            <b class="rank" data-rank={g!.to[0]}>{g!.to[0]}</b>({g!.to[1]})
+          </span>
+          <span class={`rk-score ${g!.diff >= 0 ? 'rk-up' : 'rk-down'}`}>{g!.diff >= 0 ? `+${g!.diff}` : g!.diff}</span>
+        </li>
+      ))}
+    </ol>
+  </section>
+
+  <script>
+    let axis = 'academic';
+    let era = 'y2';
+    const show = () => {
+      document.querySelectorAll<HTMLElement>('.rk-table').forEach((t) => (t.hidden = true));
+      const id = axis === 'growth' ? 'rk-growth' : `rk-${era}-${axis}`;
+      const el = document.getElementById(id);
+      if (el) el.hidden = false;
+      document.getElementById('rk-era')!.style.display = axis === 'growth' ? 'none' : '';
+    };
+    document.querySelectorAll<HTMLElement>('#rk-axis .filter-chip').forEach((b) => {
+      b.addEventListener('click', () => {
+        document.querySelectorAll('#rk-axis .filter-chip').forEach((x) => x.classList.remove('active'));
+        b.classList.add('active');
+        axis = b.dataset.axis!;
+        show();
+      });
+    });
+    document.querySelectorAll<HTMLElement>('#rk-era .filter-chip').forEach((b) => {
+      b.addEventListener('click', () => {
+        document.querySelectorAll('#rk-era .filter-chip').forEach((x) => x.classList.remove('active'));
+        b.classList.add('active');
+        era = b.dataset.era!;
+        show();
+      });
+    });
+  </script>
+
+  <style>
+    .rk-controls { display: flex; flex-direction: column; gap: 10px; }
+    .chips { display: flex; flex-wrap: wrap; gap: 6px; }
+    .filter-chip {
+      border: 1px solid var(--line); background: var(--surface-2); color: var(--ink);
+      border-radius: 999px; padding: 4px 12px; font-size: 0.82rem; cursor: pointer;
+    }
+    .filter-chip.active { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+    .rk-list { list-style: none; padding: 0; display: grid; gap: 6px; }
+    .rk-row { display: flex; align-items: center; gap: 10px; padding: 6px 12px; }
+    .rk-row.rk-top { border-color: var(--rank-a); }
+    .rk-rank {
+      min-width: 2em; text-align: center; font-weight: 800; font-size: 0.95rem; color: var(--ink-2);
+    }
+    .rk-rank-1 { color: #b78a1e; font-size: 1.15rem; }
+    .rk-rank-2 { color: #8a94a3; font-size: 1.05rem; }
+    .rk-rank-3 { color: #a5642a; font-size: 1.0rem; }
+    .rk-name { font-weight: 700; text-decoration: none; }
+    .rk-name:hover { color: var(--accent); }
+    .rk-score { margin-left: auto; font-weight: 800; font-size: 1.05rem; }
+    .rk-up { color: #2e8b57; }
+    .rk-down { color: var(--accent); }
+    .rk-growth-detail { font-size: 0.8rem; display: flex; gap: 4px; align-items: center; }
+  </style>
+</Base>
