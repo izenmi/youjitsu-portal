@@ -1,0 +1,211 @@
+---
+import Base from '../../layouts/Base.astro';
+import data from '../../data/students.json';
+
+const ERA_LABEL: Record<string, [string, number]> = {
+  y2: ['2年生編開始時点', 15],
+  y3: ['3年生編開始時点', 30],
+  est: ['管理人推定', 1],
+  true: ['真の実力', 8],
+};
+
+const vsData: Record<string, any> = {};
+for (const s of data.students as any[]) {
+  const opts: any[] = [];
+  if (s.oaaHist) {
+    for (const h of s.oaaHist) {
+      const key = h.sp === 15 ? 'y2' : 'y3';
+      opts.push({ key, label: ERA_LABEL[key][0], sp: ERA_LABEL[key][1], stats: h });
+    }
+  } else if (s.oaa) {
+    opts.push({ key: 'est', label: 'OAA(推定)', sp: 1, stats: s.oaa });
+  }
+  if (s.oaaTrue) opts.push({ key: 'true', label: '真の実力', sp: 8, stats: s.oaaTrue });
+  if (opts.length) vsData[s.id] = { name: s.name, cls: s.class, opts };
+}
+const ids = Object.keys(vsData);
+---
+
+<Base title="VS比較" description="2人のOAAレーダーチャートを重ねて比較。時点切替・比較URLのシェア対応。">
+  <h1>⚔️ VS比較</h1>
+  <p class="muted">
+    2人を選ぶとOAAレーダーチャートが重なって表示されます。時点(2年生編/3年生編)の切り替えや、
+    同一人物の2時点比較(成長の可視化)もできます。
+  </p>
+
+  <div class="card panel vs-controls">
+    {['a', 'b'].map((side) => (
+      <div class={`vs-side vs-side-${side}`}>
+        <span class={`vs-dot vs-dot-${side}`}></span>
+        <select id={`vs-sel-${side}`} class="vs-select">
+          {ids.map((id) => (
+            <option value={id}>{vsData[id].name}</option>
+          ))}
+        </select>
+        <div id={`vs-era-${side}`} class="chips"></div>
+      </div>
+    ))}
+  </div>
+
+  <div class="card panel">
+    <svg id="vs-chart" viewBox="-40 -6 380 250" width="480" role="img" aria-label="OAA比較レーダー"></svg>
+    <div id="vs-table"></div>
+    <div class="end-actions" style="margin-top: 12px;">
+      <button id="vs-copy" class="share-btn">比較URLをコピー</button>
+      <a id="vs-share" class="share-btn" target="_blank" rel="noopener">Xでシェア</a>
+    </div>
+  </div>
+
+  <script is:inline define:vars={{ vsData }}>
+    const NS = 'http://www.w3.org/2000/svg';
+    const AXES = [['academic', '学力'], ['physical', '身体能力'], ['adapt', '機転思考力'], ['social', '社会貢献性']];
+    const COLORS = { a: 'var(--accent)', b: '#3b82f6' };
+    const state = { a: 'ayanokoji', b: 'sakayanagi', ea: null, eb: null };
+
+    const progress = () => (window.ANHS ? window.ANHS.progress : 0);
+    const usable = (opt) => opt.sp <= Math.max(progress(), 1) || opt.sp === 15; // 2年時点は常時OK
+
+    const params = new URLSearchParams(location.search);
+    if (params.get('a') && vsData[params.get('a')]) state.a = params.get('a');
+    if (params.get('b') && vsData[params.get('b')]) state.b = params.get('b');
+    state.ea = params.get('ea');
+    state.eb = params.get('eb');
+
+    const pickEra = (side) => {
+      const d = vsData[state[side]];
+      const want = side === 'a' ? state.ea : state.eb;
+      const found = d.opts.find((o) => o.key === want && usable(o));
+      return found ?? d.opts.find(usable) ?? d.opts[0];
+    };
+
+    const renderEraChips = (side) => {
+      const d = vsData[state[side]];
+      const cur = pickEra(side);
+      const box = document.getElementById(`vs-era-${side}`);
+      box.innerHTML = '';
+      d.opts.forEach((o) => {
+        const b = document.createElement('button');
+        const locked = !usable(o);
+        b.className = 'filter-chip' + (o.key === cur.key ? ' active' : '');
+        b.textContent = locked ? `🔒 ${o.label}` : o.label;
+        b.disabled = locked;
+        b.addEventListener('click', () => {
+          if (side === 'a') state.ea = o.key; else state.eb = o.key;
+          render();
+        });
+        box.appendChild(b);
+      });
+      return cur;
+    };
+
+    const el = (tag, attrs, parent) => {
+      const n = document.createElementNS(NS, tag);
+      for (const [k, v] of Object.entries(attrs)) n.setAttribute(k, v);
+      parent.appendChild(n);
+      return n;
+    };
+
+    const drawChart = (sa, sb) => {
+      const svg = document.getElementById('vs-chart');
+      svg.innerHTML = '';
+      const cx = 150, cy = 118, r = 88;
+      const angle = (i) => (Math.PI / 2) * i - Math.PI / 2;
+      const pt = (i, ratio) => [cx + Math.cos(angle(i)) * r * ratio, cy + Math.sin(angle(i)) * r * ratio];
+      for (const ratio of [0.25, 0.5, 0.75, 1]) {
+        el('polygon', {
+          points: [0, 1, 2, 3].map((i) => pt(i, ratio).map((v) => v.toFixed(1)).join(',')).join(' '),
+          fill: 'none', stroke: 'var(--line)', 'stroke-width': ratio === 1 ? 1.6 : 1,
+        }, svg);
+      }
+      [0, 1, 2, 3].forEach((i) => {
+        const [x, y] = pt(i, 1);
+        el('line', { x1: cx, y1: cy, x2: x, y2: y, stroke: 'var(--line)', 'stroke-width': 1 }, svg);
+      });
+      const labelPos = [
+        [cx, cy - r - 10, 'middle'], [cx + r + 10, cy + 4, 'start'],
+        [cx, cy + r + 18, 'middle'], [cx - r - 10, cy + 4, 'end'],
+      ];
+      AXES.forEach(([key, label], i) => {
+        const t = el('text', {
+          x: labelPos[i][0], y: labelPos[i][1], 'text-anchor': labelPos[i][2],
+          'font-size': 12, fill: 'var(--ink-2)',
+        }, svg);
+        t.textContent = label;
+      });
+      for (const [side, stats] of [['a', sa], ['b', sb]]) {
+        const pts = AXES.map(([key], i) => pt(i, Math.max(0.04, (stats[key]?.[1] ?? 0) / 100)));
+        el('polygon', {
+          points: pts.map((p) => p.map((v) => v.toFixed(1)).join(',')).join(' '),
+          fill: side === 'a' ? 'rgb(179 34 60 / 0.25)' : 'rgb(59 130 246 / 0.25)',
+          stroke: COLORS[side], 'stroke-width': 2.4, 'stroke-linejoin': 'round',
+        }, svg);
+        pts.forEach((p) => el('circle', { cx: p[0], cy: p[1], r: 3, fill: COLORS[side] }, svg));
+      }
+    };
+
+    const gradeCell = (stats, key) =>
+      stats[key] ? `<b class="rank" data-rank="${stats[key][0]}">${stats[key][0]}</b> <span class="muted">(${stats[key][1]})</span>` : '—';
+
+    const render = () => {
+      const ea = renderEraChips('a');
+      const eb = renderEraChips('b');
+      const da = vsData[state.a], db = vsData[state.b];
+      document.getElementById('vs-sel-a').value = state.a;
+      document.getElementById('vs-sel-b').value = state.b;
+      drawChart(ea.stats, eb.stats);
+      const rows = [...AXES, ['overall', '総合']]
+        .map(([key, label]) => `<tr><td class="vs-cell-a">${gradeCell(ea.stats, key)}</td><th>${label}</th><td class="vs-cell-b">${gradeCell(eb.stats, key)}</td></tr>`)
+        .join('');
+      document.getElementById('vs-table').innerHTML = `
+        <table class="vs-table">
+          <tr>
+            <td class="vs-head" style="color: var(--accent)">${da.name}<br><small class="muted">${ea.label}</small></td>
+            <th></th>
+            <td class="vs-head" style="color: #3b82f6">${db.name}<br><small class="muted">${eb.label}</small></td>
+          </tr>
+          ${rows}
+        </table>`;
+      const url = new URL(location.href);
+      url.search = `?a=${state.a}&b=${state.b}&ea=${ea.key}&eb=${eb.key}`;
+      history.replaceState(null, '', url);
+      const text = `${da.name}(${ea.label}) vs ${db.name}(${eb.label}) をOAAで比較! #よう実 #高育ポータル`;
+      document.getElementById('vs-share').href =
+        `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url.href)}`;
+    };
+
+    ['a', 'b'].forEach((side) => {
+      document.getElementById(`vs-sel-${side}`).addEventListener('change', (ev) => {
+        state[side] = ev.target.value;
+        if (side === 'a') state.ea = null; else state.eb = null;
+        render();
+      });
+    });
+    document.getElementById('vs-copy').addEventListener('click', async () => {
+      await navigator.clipboard.writeText(location.href).catch(() => {});
+      document.getElementById('vs-copy').textContent = 'コピーしました!';
+      setTimeout(() => (document.getElementById('vs-copy').textContent = '比較URLをコピー'), 1500);
+    });
+    document.addEventListener('anhs:progress', render);
+    window.addEventListener('DOMContentLoaded', render);
+  </script>
+
+  <style is:global>
+    .vs-controls { display: grid; gap: 14px; }
+    @media (min-width: 640px) { .vs-controls { grid-template-columns: 1fr 1fr; } }
+    .vs-side { display: flex; flex-direction: column; gap: 8px; }
+    .vs-side { border-left: 4px solid var(--line); padding-left: 12px; }
+    .vs-side-a { border-color: var(--accent); }
+    .vs-side-b { border-color: #3b82f6; }
+    .vs-dot { display: none; }
+    .vs-select {
+      padding: 8px 10px; border-radius: 8px; border: 1px solid var(--line);
+      background: var(--surface); color: var(--ink); font-size: 0.95rem;
+    }
+    #vs-chart { display: block; max-width: 480px; width: 100%; height: auto; margin: 0 auto; }
+    .vs-table { width: 100%; max-width: 480px; margin: 8px auto 0; border-collapse: collapse; font-size: 0.92rem; }
+    .vs-table th { font-size: 0.78rem; color: var(--ink-2); padding: 5px 8px; }
+    .vs-table td { padding: 5px 8px; text-align: center; }
+    .vs-head { font-weight: 800; font-size: 0.95rem; line-height: 1.3; }
+    .vs-table tr:not(:first-child) { border-top: 1px solid var(--line); }
+  </style>
+</Base>

@@ -178,6 +178,20 @@ img, svg { max-width: 100%; height: auto; }
   margin: 8px 0;
 }
 
+/* ===== フィルタチップ(クライアント生成要素からも使うためグローバル定義) ===== */
+.chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.filter-chip {
+  border: 1px solid var(--line);
+  background: var(--surface-2);
+  color: var(--ink);
+  border-radius: 999px;
+  padding: 4px 12px;
+  font-size: 0.82rem;
+  cursor: pointer;
+}
+.filter-chip.active { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+.filter-chip:disabled { opacity: 0.55; cursor: not-allowed; }
+
 /* ===== クイズ・診断 共通UI ===== */
 .panel { padding: 20px; margin-top: 14px; }
 .choices { display: grid; gap: 8px; margin: 14px 0; }

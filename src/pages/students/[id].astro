@@ -71,7 +71,10 @@ const spLabel = (sp: number) => timeline.volumes.find((v) => v.ord === sp)?.labe
           </div>
         )}
       </div>
-      <p class="muted oaa-src">出典: MF文庫J『よう実』2年生編/3年生編 公式サイトのOAAデータ。読了位置が3年生編に達すると最新値が表示されます。</p>
+      <p class="muted oaa-src">
+        出典: MF文庫J『よう実』2年生編/3年生編 公式サイトのOAAデータ。読了位置が3年生編に達すると最新値が表示されます。
+        <a href={`${base}versus/?a=${s.id}`}>この生徒を他の生徒と比較する →</a>
+      </p>
     </section>
   ) : 'oaa' in s && s.oaa && (
     <section>

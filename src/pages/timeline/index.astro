@@ -1,0 +1,125 @@
+---
+import Base from '../../layouts/Base.astro';
+import exams from '../../data/exams.json';
+import points from '../../data/points.json';
+import students from '../../data/students.json';
+import tl from '../../data/timeline.json';
+
+const base = import.meta.env.BASE_URL;
+const volLabel = (ord: number) => tl.volumes.find((v) => v.ord === ord)?.label ?? '';
+
+type Item = {
+  ord: number; type: 'exam' | 'points' | 'exit';
+  icon: string; typeLabel: string; title: string; text?: string; href?: string;
+};
+
+const items: Item[] = [
+  ...exams.map((e) => ({
+    ord: e.sp, type: 'exam' as const, icon: '📋', typeLabel: '特別試験',
+    title: e.name, text: e.season, href: `${base}exams/${e.id}/`,
+  })),
+  ...points.points
+    .filter((p) => 'event' in p && p.event && p.ord > 0)
+    .map((p) => ({
+      ord: p.ord, type: 'points' as const, icon: '📈', typeLabel: 'クラスポイント',
+      title: p.label, text: p.event as string,
+    })),
+  ...(students.students as any[])
+    .filter((s) => s.status)
+    .map((s) => ({
+      ord: s.status.sp, type: 'exit' as const, icon: '⚠️', typeLabel: '退学',
+      title: `${s.name} ${s.status.text}`, href: `${base}students/${s.id}/`,
+    })),
+].sort((a, b) => a.ord - b.ord);
+
+const arcs = [
+  { start: 1, end: 14, label: '1年生編' },
+  { start: 15, end: 29, label: '2年生編' },
+  { start: 30, end: 99, label: '3年生編' },
+];
+---
+
+<Base title="統合年表" description="特別試験・クラスポイント変動・退学者を1本の年表で。読了位置マーカー付き。">
+  <h1>📜 統合年表</h1>
+  <p class="muted">
+    特別試験・クラスポイントの変動・退学者を時系列で1本にまとめました。
+    「📖 ここまで読了」のラインが、あなたの読了位置(右上📖)に合わせて動きます。
+  </p>
+
+  {arcs.map((arc) => (
+    <section>
+      <h2 class="section-title">{arc.label}</h2>
+      <div class="tl-list">
+        {items.filter((i) => i.ord >= arc.start && i.ord <= arc.end).map((i) => (
+          <div class="tl-item" data-ord={i.ord}>
+            <div class="tl-marker">
+              <span class="vol-badge">{volLabel(i.ord).replace(/(1年生編|2年生編|3年生編)/, '').replace(/\(.+\)/, '') || '—'}</span>
+            </div>
+            <div
+              class={`card tl-card tl-${i.type}`}
+              data-sp={i.ord > 1 ? i.ord : undefined}
+              data-sp-label={volLabel(i.ord)}
+            >
+              <span class="tl-type">{i.icon} {i.typeLabel}</span>
+              {i.href ? <a href={i.href} class="tl-title">{i.title}</a> : <strong class="tl-title">{i.title}</strong>}
+              {i.text && <p class="tl-text muted">{i.text}</p>}
+            </div>
+          </div>
+        ))}
+      </div>
+    </section>
+  ))}
+
+  <script>
+    // 読了位置マーカーを該当位置に差し込む
+    const marker = document.createElement('div');
+    marker.className = 'tl-readline';
+    marker.innerHTML = '<span>📖 ここまで読了</span>';
+    const place = () => {
+      const p = (window as any).ANHS ? (window as any).ANHS.progress : 0;
+      const rows = [...document.querySelectorAll<HTMLElement>('.tl-item')];
+      let last: HTMLElement | null = null;
+      for (const r of rows) {
+        if (Number(r.dataset.ord) <= p) last = r;
+      }
+      if (last) last.after(marker);
+      else rows[0]?.before(marker);
+    };
+    document.addEventListener('anhs:progress', place);
+    window.addEventListener('DOMContentLoaded', place);
+  </script>
+
+  <style is:global>
+    .tl-list { position: relative; }
+    .tl-item {
+      display: grid; grid-template-columns: 74px 1fr; gap: 12px; margin-bottom: 12px;
+    }
+    .tl-marker { position: relative; text-align: center; padding-top: 12px; }
+    .tl-marker::before {
+      content: ""; position: absolute; left: 50%; top: 0; bottom: -12px;
+      width: 2px; background: var(--line); z-index: 0;
+    }
+    .tl-item .vol-badge {
+      position: relative; z-index: 1; display: inline-block;
+      background: var(--navy); color: var(--navy-ink);
+      font-size: 0.7rem; font-weight: 700; border-radius: 999px; padding: 3px 8px;
+    }
+    .tl-card { padding: 10px 16px; }
+    .tl-exam { border-left: 4px solid var(--accent); }
+    .tl-points { border-left: 4px solid #3b82f6; }
+    .tl-exit { border-left: 4px solid #b78a1e; }
+    .tl-type { font-size: 0.7rem; font-weight: 700; color: var(--ink-2); display: block; }
+    .tl-title { font-weight: 700; text-decoration: none; font-size: 0.95rem; }
+    a.tl-title:hover { color: var(--accent); }
+    .tl-text { font-size: 0.82rem; margin: 2px 0 0; }
+    .tl-readline {
+      display: flex; align-items: center; gap: 10px; margin: 14px 0;
+    }
+    .tl-readline::before, .tl-readline::after {
+      content: ""; flex: 1; height: 2px; background: var(--accent);
+    }
+    .tl-readline span {
+      color: var(--accent); font-weight: 800; font-size: 0.85rem; white-space: nowrap;
+    }
+  </style>
+</Base>

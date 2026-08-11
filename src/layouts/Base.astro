@@ -14,9 +14,11 @@ const base = import.meta.env.BASE_URL;
 const nav = [
   { href: `${base}students/`, label: '生徒名鑑' },
   { href: `${base}relations/`, label: '相関図' },
+  { href: `${base}timeline/`, label: '年表' },
   { href: `${base}exams/`, label: '特別試験' },
   { href: `${base}points/`, label: 'ポイント' },
   { href: `${base}ranking/`, label: 'ランキング' },
+  { href: `${base}versus/`, label: 'VS比較' },
   { href: `${base}quiz/`, label: 'クイズ' },
   { href: `${base}shindan/`, label: '診断' },
   { href: `${base}taiken/`, label: '試験体験' },
@@ -226,9 +228,9 @@ const nav = [
       }
       .site-nav a {
         text-decoration: none;
-        padding: 6px 10px;
+        padding: 5px 8px;
         border-radius: 8px;
-        font-size: 0.9rem;
+        font-size: 0.84rem;
       }
       .site-nav a:hover { background: rgb(255 255 255 / 0.12); }
       .sp-btn {
