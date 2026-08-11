@@ -1,6 +1,6 @@
 ---
 // パラメータ式のキャラポートレート(全て自作SVG)。
-// 髪型・色・表情・小物の組み合わせでキャラを描き分ける。
+// 性別で顔立ち・体格・制服を、髪型パーツでキャラを描き分ける。
 interface Props {
   id: string;
   size?: number;
@@ -8,33 +8,37 @@ interface Props {
 }
 
 type Cfg = {
-  front: 'flat' | 'side' | 'spiky' | 'curtain' | 'swept';
-  back: 'short' | 'bob' | 'long' | 'ponytail' | 'twin';
+  gender: 'm' | 'f';
+  front: 'flat' | 'side' | 'curtain' | 'messy' | 'neat' | 'spiky' | 'slick';
+  back: 'short-m' | 'mid' | 'bob' | 'long' | 'wavy' | 'ponytail' | 'twin';
   hair: string;
   eyes: string;
   expr: 'neutral' | 'smile' | 'smirk' | 'shy' | 'fierce' | 'soft';
   glasses?: boolean;
-  ribbon?: string;
-  jacket?: string;
+  ribbon?: string;   // 髪飾り
+  jacket?: string;   // 制服上着の上書き(教師など)
+  noBow?: boolean;   // 女子の襟リボンを外す(教師など)
 };
 
 const CONFIGS: Record<string, Cfg> = {
-  ayanokoji: { front: 'flat', back: 'short', hair: '#8a6d4f', eyes: '#6b5741', expr: 'neutral' },
-  horikita: { front: 'side', back: 'long', hair: '#3d2c35', eyes: '#b0405c', expr: 'neutral' },
-  karuizawa: { front: 'side', back: 'ponytail', hair: '#e8b45e', eyes: '#4f7ad9', expr: 'smile', ribbon: '#d94f6d' },
-  kushida: { front: 'flat', back: 'long', hair: '#c9986b', eyes: '#d98a3d', expr: 'smile' },
-  hirata: { front: 'side', back: 'short', hair: '#b98d4e', eyes: '#8a6d3f', expr: 'smile' },
-  sudo: { front: 'spiky', back: 'short', hair: '#c4372f', eyes: '#7a2d22', expr: 'fierce' },
-  koenji: { front: 'swept', back: 'short', hair: '#d9b13b', eyes: '#3f7a4f', expr: 'smirk' },
-  sakura: { front: 'curtain', back: 'long', hair: '#e8a0b4', eyes: '#c96a80', expr: 'shy', glasses: true },
-  haruka: { front: 'flat', back: 'bob', hair: '#a5544a', eyes: '#8a4a3f', expr: 'smile' },
-  keisei: { front: 'curtain', back: 'short', hair: '#5f7a94', eyes: '#46628a', expr: 'neutral', glasses: true },
-  ichinose: { front: 'side', back: 'bob', hair: '#d99e56', eyes: '#d98a3d', expr: 'smile' },
-  ryuen: { front: 'spiky', back: 'short', hair: '#4a3d66', eyes: '#7a6dd9', expr: 'smirk' },
-  sakayanagi: { front: 'curtain', back: 'long', hair: '#cfc4de', eyes: '#9a8ac9', expr: 'soft', ribbon: '#4f5f8a' },
-  ibuki: { front: 'side', back: 'bob', hair: '#c6ccd2', eyes: '#5f8a6d', expr: 'fierce' },
-  chabashira: { front: 'side', back: 'long', hair: '#6b5747', eyes: '#5f4a3d', expr: 'neutral', jacket: '#37415a' },
-  amasawa: { front: 'flat', back: 'twin', hair: '#d97a8a', eyes: '#d95f6d', expr: 'smile', ribbon: '#8a2438' },
+  // --- 男子 ---
+  ayanokoji: { gender: 'm', front: 'messy', back: 'short-m', hair: '#7a6046', eyes: '#6b5741', expr: 'neutral' },
+  hirata: { gender: 'm', front: 'neat', back: 'short-m', hair: '#b98d4e', eyes: '#8a6d3f', expr: 'smile' },
+  sudo: { gender: 'm', front: 'spiky', back: 'short-m', hair: '#c4372f', eyes: '#7a2d22', expr: 'fierce' },
+  koenji: { gender: 'm', front: 'slick', back: 'mid', hair: '#e0b93f', eyes: '#3f7a4f', expr: 'smirk' },
+  keisei: { gender: 'm', front: 'curtain', back: 'short-m', hair: '#5f7a94', eyes: '#46628a', expr: 'neutral', glasses: true },
+  ryuen: { gender: 'm', front: 'slick', back: 'short-m', hair: '#453a5c', eyes: '#7a6dd9', expr: 'smirk' },
+  // --- 女子 ---
+  horikita: { gender: 'f', front: 'side', back: 'long', hair: '#3d2c35', eyes: '#b0405c', expr: 'neutral' },
+  karuizawa: { gender: 'f', front: 'side', back: 'ponytail', hair: '#e8b45e', eyes: '#4f7ad9', expr: 'smile', ribbon: '#d94f6d' },
+  kushida: { gender: 'f', front: 'flat', back: 'bob', hair: '#c9986b', eyes: '#d98a3d', expr: 'smile' },
+  sakura: { gender: 'f', front: 'curtain', back: 'long', hair: '#e8a0b4', eyes: '#c96a80', expr: 'shy', glasses: true },
+  haruka: { gender: 'f', front: 'flat', back: 'bob', hair: '#a5544a', eyes: '#8a4a3f', expr: 'smile' },
+  ichinose: { gender: 'f', front: 'side', back: 'wavy', hair: '#d99e56', eyes: '#d98a3d', expr: 'smile' },
+  sakayanagi: { gender: 'f', front: 'curtain', back: 'wavy', hair: '#cfc4de', eyes: '#9a8ac9', expr: 'soft' },
+  ibuki: { gender: 'f', front: 'side', back: 'bob', hair: '#c6ccd2', eyes: '#5f8a6d', expr: 'fierce' },
+  chabashira: { gender: 'f', front: 'side', back: 'long', hair: '#6b5747', eyes: '#5f4a3d', expr: 'neutral', jacket: '#37415a', noBow: true },
+  amasawa: { gender: 'f', front: 'flat', back: 'twin', hair: '#e06a72', eyes: '#d95f6d', expr: 'smile', ribbon: '#8a2438' },
 };
 
 const CLASS_BG: Record<string, string> = {
@@ -45,12 +49,14 @@ const { id, size = 96, classKey } = Astro.props;
 const cfg = CONFIGS[id];
 const bg = (classKey && CLASS_BG[classKey]) || '#e7ebf1';
 const skin = '#ffe8d8';
-const jacket = cfg?.jacket ?? '#8f2438';
+// 制服: 高育の男女共通ダークオリーブのブレザー
+const jacket = cfg?.jacket ?? '#4a5548';
 const darker = (hex: string) => {
   const n = parseInt(hex.slice(1), 16);
   const f = (v: number) => Math.max(0, Math.round(v * 0.72));
   return `#${((f(n >> 16) << 16) | (f((n >> 8) & 255) << 8) | f(n & 255)).toString(16).padStart(6, '0')}`;
 };
+const isM = cfg?.gender === 'm';
 ---
 
 {cfg ? (
@@ -60,48 +66,103 @@ const darker = (hex: string) => {
       <rect width="120" height="120" fill={bg} />
 
       {/* 後ろ髪 */}
-      {cfg.back === 'long' && <path d="M24 118 Q18 70 30 44 Q40 20 60 20 Q80 20 90 44 Q102 70 96 118 Z" fill={cfg.hair} />}
+      {cfg.back === 'short-m' && <path d="M33 58 Q29 36 42 27 Q52 21 60 21 Q68 21 78 27 Q91 36 87 58 Q74 52 60 52 Q46 52 33 58 Z" fill={cfg.hair} />}
+      {cfg.back === 'mid' && <path d="M30 88 Q24 52 38 32 Q48 21 60 21 Q72 21 82 32 Q96 52 90 88 Q76 95 60 95 Q44 95 30 88 Z" fill={cfg.hair} />}
       {cfg.back === 'bob' && <path d="M28 92 Q22 62 32 42 Q42 21 60 21 Q78 21 88 42 Q98 62 92 92 Q76 100 60 100 Q44 100 28 92 Z" fill={cfg.hair} />}
-      {cfg.back === 'short' && <path d="M32 74 Q26 52 36 36 Q46 22 60 22 Q74 22 84 36 Q94 52 88 74 Q74 82 60 82 Q46 82 32 74 Z" fill={cfg.hair} />}
+      {cfg.back === 'long' && <path d="M24 118 Q18 70 30 44 Q40 20 60 20 Q80 20 90 44 Q102 70 96 118 Z" fill={cfg.hair} />}
+      {cfg.back === 'wavy' && (
+        <>
+          <path d="M24 112 Q17 70 30 44 Q40 20 60 20 Q80 20 90 44 Q103 70 96 112 Z" fill={cfg.hair} />
+          <circle cx="28" cy="86" r="8" fill={cfg.hair} />
+          <circle cx="24" cy="102" r="8" fill={cfg.hair} />
+          <circle cx="92" cy="86" r="8" fill={cfg.hair} />
+          <circle cx="96" cy="102" r="8" fill={cfg.hair} />
+        </>
+      )}
       {cfg.back === 'ponytail' && (
         <>
           <path d="M32 76 Q26 52 36 36 Q46 22 60 22 Q74 22 84 36 Q94 52 88 76 Q74 84 60 84 Q46 84 32 76 Z" fill={cfg.hair} />
-          <path d="M84 34 Q104 40 100 72 Q97 96 88 112 Q82 96 84 76 Q86 52 78 40 Z" fill={cfg.hair} />
+          <path d="M80 24 Q108 24 104 62 Q101 94 90 112 Q85 92 86 68 Q88 42 76 30 Z" fill={cfg.hair} />
+          <circle cx="83" cy="28" r="5" fill={cfg.hair} />
         </>
       )}
       {cfg.back === 'twin' && (
         <>
           <path d="M32 76 Q26 52 36 36 Q46 22 60 22 Q74 22 84 36 Q94 52 88 76 Q74 84 60 84 Q46 84 32 76 Z" fill={cfg.hair} />
-          <path d="M30 40 Q12 52 16 84 Q18 102 26 114 Q32 96 30 76 Q28 54 36 42 Z" fill={cfg.hair} />
-          <path d="M90 40 Q108 52 104 84 Q102 102 94 114 Q88 96 90 76 Q92 54 84 42 Z" fill={cfg.hair} />
+          <path d="M30 38 Q10 48 15 84 Q18 104 27 116 Q32 96 30 74 Q28 52 37 40 Z" fill={cfg.hair} />
+          <path d="M90 38 Q110 48 105 84 Q102 104 93 116 Q88 96 90 74 Q92 52 83 40 Z" fill={cfg.hair} />
         </>
       )}
 
       {/* 体・制服 */}
-      <path d="M28 120 Q30 96 46 92 L60 90 L74 92 Q90 96 92 120 Z" fill={jacket} />
-      <path d="M52 92 L60 90 L68 92 L64 104 L60 98 L56 104 Z" fill="#fff" />
-      <path d="M58 97 L62 97 L63 106 L60 110 L57 106 Z" fill={cfg.jacket ? '#8593ad' : '#3d4f73'} />
+      {isM ? (
+        <>
+          <path d="M22 120 Q24 93 44 89 L60 87 L76 89 Q96 93 98 120 Z" fill={jacket} />
+          <path d="M50 90 L60 87 L70 90 L64 102 L60 96 L56 102 Z" fill="#fff" />
+          <path d="M57.5 95 L62.5 95 L64 106 L60 111 L56 106 Z" fill="#b3223c" />
+        </>
+      ) : (
+        <>
+          <path d="M28 120 Q30 96 46 92 L60 90 L74 92 Q90 96 92 120 Z" fill={jacket} />
+          <path d="M52 92 L60 90 L68 92 L64 103 L60 97 L56 103 Z" fill="#fff" />
+          {!cfg.noBow && (
+            <g fill="#b3223c">
+              <path d="M60 98 L49 93 L51 103 Z" />
+              <path d="M60 98 L71 93 L69 103 Z" />
+              <circle cx="60" cy="98" r="2.6" />
+            </g>
+          )}
+        </>
+      )}
 
       {/* 顔 */}
-      <path d="M38 52 Q38 28 60 28 Q82 28 82 52 Q82 66 74 74 Q67 80 60 80 Q53 80 46 74 Q38 66 38 52 Z" fill={skin} />
-      {/* 耳 */}
+      {isM ? (
+        <path d="M38 52 Q38 27 60 27 Q82 27 82 52 Q82 67 75 75 Q67 81 60 81 Q53 81 45 75 Q38 67 38 52 Z" fill={skin} />
+      ) : (
+        <path d="M38 52 Q38 28 60 28 Q82 28 82 52 Q82 66 74 74 Q67 80 60 80 Q53 80 46 74 Q38 66 38 52 Z" fill={skin} />
+      )}
       <ellipse cx="38" cy="56" rx="3.4" ry="5" fill={skin} />
       <ellipse cx="82" cy="56" rx="3.4" ry="5" fill={skin} />
 
-      {/* 目 */}
-      <g>
-        <ellipse cx="50" cy="58" rx="6" ry={cfg.expr === 'smile' ? 6.4 : 7} fill="#fff" />
-        <ellipse cx="70" cy="58" rx="6" ry={cfg.expr === 'smile' ? 6.4 : 7} fill="#fff" />
-        <ellipse cx="50" cy="58.5" rx="4.6" ry={cfg.expr === 'smile' ? 5 : 5.8} fill={cfg.eyes} />
-        <ellipse cx="70" cy="58.5" rx="4.6" ry={cfg.expr === 'smile' ? 5 : 5.8} fill={cfg.eyes} />
-        <circle cx="48.4" cy="56.4" r="1.7" fill="#fff" />
-        <circle cx="68.4" cy="56.4" r="1.7" fill="#fff" />
-        <circle cx="51.8" cy="60.6" r="0.9" fill="#fff" opacity="0.8" />
-        <circle cx="71.8" cy="60.6" r="0.9" fill="#fff" opacity="0.8" />
-      </g>
+      {/* 目 (男子は細め+上まぶたライン、女子は大きめ) */}
+      {isM ? (
+        <g>
+          <ellipse cx="50" cy="59" rx="5.2" ry="4.4" fill="#fff" />
+          <ellipse cx="70" cy="59" rx="5.2" ry="4.4" fill="#fff" />
+          <ellipse cx="50" cy="59.4" rx="3.8" ry="3.7" fill={cfg.eyes} />
+          <ellipse cx="70" cy="59.4" rx="3.8" ry="3.7" fill={cfg.eyes} />
+          <circle cx="48.8" cy="58" r="1.2" fill="#fff" />
+          <circle cx="68.8" cy="58" r="1.2" fill="#fff" />
+          <path d="M44.5 56 Q50 53.5 55.5 56" stroke="#3d3229" stroke-width="1.5" fill="none" stroke-linecap="round" />
+          <path d="M64.5 56 Q70 53.5 75.5 56" stroke="#3d3229" stroke-width="1.5" fill="none" stroke-linecap="round" />
+        </g>
+      ) : (
+        <g>
+          <ellipse cx="50" cy="58" rx="6" ry={cfg.expr === 'smile' ? 6.4 : 7} fill="#fff" />
+          <ellipse cx="70" cy="58" rx="6" ry={cfg.expr === 'smile' ? 6.4 : 7} fill="#fff" />
+          <ellipse cx="50" cy="58.5" rx="4.6" ry={cfg.expr === 'smile' ? 5 : 5.8} fill={cfg.eyes} />
+          <ellipse cx="70" cy="58.5" rx="4.6" ry={cfg.expr === 'smile' ? 5 : 5.8} fill={cfg.eyes} />
+          <circle cx="48.4" cy="56.4" r="1.7" fill="#fff" />
+          <circle cx="68.4" cy="56.4" r="1.7" fill="#fff" />
+          <circle cx="51.8" cy="60.6" r="0.9" fill="#fff" opacity="0.8" />
+          <circle cx="71.8" cy="60.6" r="0.9" fill="#fff" opacity="0.8" />
+        </g>
+      )}
 
       {/* 眉 */}
-      {cfg.expr === 'fierce' ? (
+      {isM ? (
+        cfg.expr === 'fierce' ? (
+          <>
+            <path d="M43.5 49 L56 52" stroke={darker(cfg.hair)} stroke-width="2.4" stroke-linecap="round" fill="none" />
+            <path d="M76.5 49 L64 52" stroke={darker(cfg.hair)} stroke-width="2.4" stroke-linecap="round" fill="none" />
+          </>
+        ) : (
+          <>
+            <path d="M44 51 L56 51.5" stroke={darker(cfg.hair)} stroke-width="2.2" stroke-linecap="round" fill="none" />
+            <path d="M64 51.5 L76 51" stroke={darker(cfg.hair)} stroke-width="2.2" stroke-linecap="round" fill="none" />
+          </>
+        )
+      ) : cfg.expr === 'fierce' ? (
         <>
           <path d="M44 48 L56 51" stroke={darker(cfg.hair)} stroke-width="2" stroke-linecap="round" fill="none" />
           <path d="M76 48 L64 51" stroke={darker(cfg.hair)} stroke-width="2" stroke-linecap="round" fill="none" />
@@ -119,23 +180,34 @@ const darker = (hex: string) => {
       )}
 
       {/* 口 */}
-      {cfg.expr === 'smile' && <path d="M55 70 Q60 74.5 65 70" stroke="#c25f6d" stroke-width="2" stroke-linecap="round" fill="none" />}
+      {cfg.expr === 'smile' && <path d="M55 70 Q60 74.5 65 70" stroke={isM ? '#a05a4a' : '#c25f6d'} stroke-width="2" stroke-linecap="round" fill="none" />}
       {cfg.expr === 'soft' && <path d="M56.5 70.5 Q60 73 63.5 70.5" stroke="#c25f6d" stroke-width="1.8" stroke-linecap="round" fill="none" />}
-      {cfg.expr === 'neutral' && <path d="M56.5 71 Q60 72.4 63.5 71" stroke="#c25f6d" stroke-width="1.8" stroke-linecap="round" fill="none" />}
-      {cfg.expr === 'smirk' && <path d="M55 71 Q61 74 66 69.5" stroke="#c25f6d" stroke-width="2" stroke-linecap="round" fill="none" />}
+      {cfg.expr === 'neutral' && <path d="M56 71.5 L64 71.5" stroke={isM ? '#a05a4a' : '#c25f6d'} stroke-width="1.8" stroke-linecap="round" fill="none" />}
+      {cfg.expr === 'smirk' && <path d="M55 71 Q61 74 66 69.5" stroke={isM ? '#a05a4a' : '#c25f6d'} stroke-width="2" stroke-linecap="round" fill="none" />}
       {cfg.expr === 'shy' && <path d="M57 71.5 Q60 70.4 63 71.5" stroke="#c25f6d" stroke-width="1.8" stroke-linecap="round" fill="none" />}
-      {cfg.expr === 'fierce' && <path d="M56 71.5 Q60 70 64 71.5" stroke="#c25f6d" stroke-width="2" stroke-linecap="round" fill="none" />}
+      {cfg.expr === 'fierce' && <path d="M55.5 72 Q60 70 64.5 72" stroke={isM ? '#a05a4a' : '#c25f6d'} stroke-width="2" stroke-linecap="round" fill="none" />}
 
-      {/* 頬 */}
-      <ellipse cx="45" cy="66" rx="3.6" ry="2" fill="#ffb9b0" opacity="0.55" />
-      <ellipse cx="75" cy="66" rx="3.6" ry="2" fill="#ffb9b0" opacity="0.55" />
+      {/* 頬(女子のみ) */}
+      {!isM && (
+        <>
+          <ellipse cx="45" cy="66" rx="3.6" ry="2" fill="#ffb9b0" opacity="0.55" />
+          <ellipse cx="75" cy="66" rx="3.6" ry="2" fill="#ffb9b0" opacity="0.55" />
+        </>
+      )}
 
       {/* 前髪 */}
       {cfg.front === 'flat' && <path d="M37 54 Q35 26 60 26 Q85 26 83 54 L78 44 L72 52 L66 42 L60 52 L54 42 L48 52 L42 44 Z" fill={cfg.hair} />}
       {cfg.front === 'side' && <path d="M37 54 Q34 26 60 26 Q86 26 83 54 L79 42 L70 50 L58 38 Q52 48 44 50 L41 44 Z" fill={cfg.hair} />}
-      {cfg.front === 'spiky' && <path d="M37 54 L34 30 L44 40 L47 26 L55 38 L62 24 L68 38 L76 27 L78 41 L86 32 L83 54 L76 42 L68 50 L60 40 L52 50 L43 42 Z" fill={cfg.hair} />}
       {cfg.front === 'curtain' && <path d="M37 56 Q35 25 60 25 Q85 25 83 56 L77 36 Q72 44 63 46 L60 38 L57 46 Q48 44 43 36 L39 56 Z" fill={cfg.hair} />}
-      {cfg.front === 'swept' && <path d="M37 50 Q34 24 62 25 Q88 27 84 52 L80 38 Q70 32 58 33 Q46 34 41 44 Z" fill={cfg.hair} />}
+      {cfg.front === 'messy' && <path d="M37 50 Q34 25 60 25 Q86 25 83 50 L80 38 L74 45 L69 36 L63 45 L57 36 L51 45 L45 37 L40 48 Z" fill={cfg.hair} />}
+      {cfg.front === 'neat' && <path d="M37 49 Q34 25 60 25 Q86 25 83 49 L80 36 Q66 45 49 41 Q42 39 39 47 Z" fill={cfg.hair} />}
+      {cfg.front === 'spiky' && <path d="M37 52 L33 29 L44 39 L47 25 L55 37 L62 23 L68 37 L76 26 L78 40 L87 31 L83 52 L76 41 L68 48 L60 39 L52 48 L43 41 Z" fill={cfg.hair} />}
+      {cfg.front === 'slick' && (
+        <>
+          <path d="M36 46 Q33 21 60 21 Q87 21 84 46 Q80 31 60 31 Q40 31 36 46 Z" fill={cfg.hair} />
+          <path d="M60 31 L56 42 L61 35 L64 40 Z" fill={cfg.hair} />
+        </>
+      )}
 
       {/* 小物 */}
       {cfg.glasses && (
@@ -145,7 +217,20 @@ const darker = (hex: string) => {
           <path d="M57.5 57 Q60 55.5 62.5 57" />
         </g>
       )}
-      {cfg.ribbon && (
+      {cfg.ribbon && cfg.back === 'ponytail' && (
+        <g fill={cfg.ribbon}>
+          <path d="M81 26 L89 19 L89 29 Z" />
+          <path d="M81 26 L88 34 L79 33 Z" />
+          <circle cx="82" cy="27" r="2.4" />
+        </g>
+      )}
+      {cfg.ribbon && cfg.back === 'twin' && (
+        <g fill={cfg.ribbon}>
+          <circle cx="33" cy="40" r="3" />
+          <circle cx="87" cy="40" r="3" />
+        </g>
+      )}
+      {cfg.ribbon && cfg.back !== 'ponytail' && cfg.back !== 'twin' && (
         <g fill={cfg.ribbon}>
           <path d="M84 33 L92 27 L91 36 Z" />
           <path d="M84 33 L90 41 L82 40 Z" />
