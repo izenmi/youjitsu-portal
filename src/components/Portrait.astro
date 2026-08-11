@@ -9,12 +9,13 @@ interface Props {
 
 type Cfg = {
   gender: 'm' | 'f';
-  front: 'flat' | 'side' | 'curtain' | 'messy' | 'neat' | 'spiky' | 'slick';
+  front: 'flat' | 'side' | 'curtain' | 'messy' | 'neat' | 'spiky' | 'slick' | 'hime';
   back: 'short-m' | 'mid' | 'bob' | 'long' | 'wavy' | 'ponytail' | 'twin';
   hair: string;
   eyes: string;
   expr: 'neutral' | 'smile' | 'smirk' | 'shy' | 'fierce' | 'soft';
   glasses?: boolean;
+  beret?: boolean;   // ベレー帽(坂柳)
   ribbon?: string;   // 髪飾り
   jacket?: string;   // 制服上着の上書き(教師など)
   noBow?: boolean;   // 女子の襟リボンを外す(教師など)
@@ -22,23 +23,23 @@ type Cfg = {
 
 const CONFIGS: Record<string, Cfg> = {
   // --- 男子 ---
-  ayanokoji: { gender: 'm', front: 'messy', back: 'short-m', hair: '#7a6046', eyes: '#6b5741', expr: 'neutral' },
-  hirata: { gender: 'm', front: 'neat', back: 'short-m', hair: '#b98d4e', eyes: '#8a6d3f', expr: 'smile' },
+  ayanokoji: { gender: 'm', front: 'messy', back: 'short-m', hair: '#8a5a44', eyes: '#6b5741', expr: 'neutral' },
+  hirata: { gender: 'm', front: 'curtain', back: 'short-m', hair: '#96884f', eyes: '#8a6d3f', expr: 'smile' },
   sudo: { gender: 'm', front: 'spiky', back: 'short-m', hair: '#c4372f', eyes: '#7a2d22', expr: 'fierce' },
   koenji: { gender: 'm', front: 'slick', back: 'mid', hair: '#e0b93f', eyes: '#3f7a4f', expr: 'smirk' },
-  keisei: { gender: 'm', front: 'curtain', back: 'short-m', hair: '#5f7a94', eyes: '#46628a', expr: 'neutral', glasses: true },
-  ryuen: { gender: 'm', front: 'slick', back: 'short-m', hair: '#453a5c', eyes: '#7a6dd9', expr: 'smirk' },
+  keisei: { gender: 'm', front: 'curtain', back: 'short-m', hair: '#3f6058', eyes: '#46628a', expr: 'neutral', glasses: true },
+  ryuen: { gender: 'm', front: 'slick', back: 'short-m', hair: '#5a3a4e', eyes: '#7a6dd9', expr: 'smirk' },
   // --- 女子 ---
-  horikita: { gender: 'f', front: 'side', back: 'long', hair: '#3d2c35', eyes: '#b0405c', expr: 'neutral' },
+  horikita: { gender: 'f', front: 'hime', back: 'bob', hair: '#2a2731', eyes: '#b0405c', expr: 'neutral' },
   karuizawa: { gender: 'f', front: 'side', back: 'ponytail', hair: '#e8b45e', eyes: '#4f7ad9', expr: 'smile', ribbon: '#d94f6d' },
-  kushida: { gender: 'f', front: 'flat', back: 'bob', hair: '#c9986b', eyes: '#d98a3d', expr: 'smile' },
-  sakura: { gender: 'f', front: 'curtain', back: 'long', hair: '#e8a0b4', eyes: '#c96a80', expr: 'shy', glasses: true },
-  haruka: { gender: 'f', front: 'flat', back: 'bob', hair: '#a5544a', eyes: '#8a4a3f', expr: 'smile' },
-  ichinose: { gender: 'f', front: 'side', back: 'wavy', hair: '#d99e56', eyes: '#d98a3d', expr: 'smile' },
-  sakayanagi: { gender: 'f', front: 'curtain', back: 'wavy', hair: '#cfc4de', eyes: '#9a8ac9', expr: 'soft' },
-  ibuki: { gender: 'f', front: 'side', back: 'bob', hair: '#c6ccd2', eyes: '#5f8a6d', expr: 'fierce' },
-  chabashira: { gender: 'f', front: 'side', back: 'long', hair: '#6b5747', eyes: '#5f4a3d', expr: 'neutral', jacket: '#37415a', noBow: true },
-  amasawa: { gender: 'f', front: 'flat', back: 'twin', hair: '#e06a72', eyes: '#d95f6d', expr: 'smile', ribbon: '#8a2438' },
+  kushida: { gender: 'f', front: 'hime', back: 'bob', hair: '#c9986b', eyes: '#d98a3d', expr: 'smile' },
+  sakura: { gender: 'f', front: 'curtain', back: 'bob', hair: '#e8a0b4', eyes: '#c96a80', expr: 'shy', glasses: true },
+  haruka: { gender: 'f', front: 'side', back: 'long', hair: '#5580b0', eyes: '#4a6da0', expr: 'smile' },
+  ichinose: { gender: 'f', front: 'side', back: 'long', hair: '#eba0b6', eyes: '#d98a3d', expr: 'smile' },
+  sakayanagi: { gender: 'f', front: 'curtain', back: 'wavy', hair: '#cfc4de', eyes: '#9a8ac9', expr: 'soft', beret: true },
+  ibuki: { gender: 'f', front: 'side', back: 'bob', hair: '#4e7f96', eyes: '#5f8a6d', expr: 'fierce' },
+  chabashira: { gender: 'f', front: 'side', back: 'ponytail', hair: '#4a3628', eyes: '#5f4a3d', expr: 'neutral', jacket: '#37415a', noBow: true },
+  amasawa: { gender: 'f', front: 'flat', back: 'twin', hair: '#cc4f60', eyes: '#d95f6d', expr: 'smile', ribbon: '#8a2438' },
 };
 
 const CLASS_BG: Record<string, string> = {
@@ -49,8 +50,8 @@ const { id, size = 96, classKey } = Astro.props;
 const cfg = CONFIGS[id];
 const bg = (classKey && CLASS_BG[classKey]) || '#e7ebf1';
 const skin = '#ffe8d8';
-// 制服: 高育の男女共通ダークオリーブのブレザー
-const jacket = cfg?.jacket ?? '#4a5548';
+// 制服: 高育の男女共通の赤ブレザー(公式ビジュアル準拠)
+const jacket = cfg?.jacket ?? '#a83240';
 const darker = (hex: string) => {
   const n = parseInt(hex.slice(1), 16);
   const f = (v: number) => Math.max(0, Math.round(v * 0.72));
@@ -99,14 +100,14 @@ const isM = cfg?.gender === 'm';
         <>
           <path d="M22 120 Q24 93 44 89 L60 87 L76 89 Q96 93 98 120 Z" fill={jacket} />
           <path d="M50 90 L60 87 L70 90 L64 102 L60 96 L56 102 Z" fill="#fff" />
-          <path d="M57.5 95 L62.5 95 L64 106 L60 111 L56 106 Z" fill="#b3223c" />
+          <path d="M57.5 95 L62.5 95 L64 106 L60 111 L56 106 Z" fill="#2f3f73" />
         </>
       ) : (
         <>
           <path d="M28 120 Q30 96 46 92 L60 90 L74 92 Q90 96 92 120 Z" fill={jacket} />
           <path d="M52 92 L60 90 L68 92 L64 103 L60 97 L56 103 Z" fill="#fff" />
           {!cfg.noBow && (
-            <g fill="#b3223c">
+            <g fill="#2f3f73">
               <path d="M60 98 L49 93 L51 103 Z" />
               <path d="M60 98 L71 93 L69 103 Z" />
               <circle cx="60" cy="98" r="2.6" />
@@ -196,6 +197,7 @@ const isM = cfg?.gender === 'm';
       )}
 
       {/* 前髪 */}
+      {cfg.front === 'hime' && <path d="M37 54 Q35 25 60 25 Q85 25 83 54 L80 44 Q70 48.5 60 48.5 Q50 48.5 40 44 Z" fill={cfg.hair} />}
       {cfg.front === 'flat' && <path d="M37 54 Q35 26 60 26 Q85 26 83 54 L78 44 L72 52 L66 42 L60 52 L54 42 L48 52 L42 44 Z" fill={cfg.hair} />}
       {cfg.front === 'side' && <path d="M37 54 Q34 26 60 26 Q86 26 83 54 L79 42 L70 50 L58 38 Q52 48 44 50 L41 44 Z" fill={cfg.hair} />}
       {cfg.front === 'curtain' && <path d="M37 56 Q35 25 60 25 Q85 25 83 56 L77 36 Q72 44 63 46 L60 38 L57 46 Q48 44 43 36 L39 56 Z" fill={cfg.hair} />}
@@ -210,6 +212,12 @@ const isM = cfg?.gender === 'm';
       )}
 
       {/* 小物 */}
+      {cfg.beret && (
+        <g>
+          <path d="M32 34 Q34 18 60 18 Q86 18 88 34 Q74 40 60 39 Q46 40 32 34 Z" fill="#2c2c38" />
+          <circle cx="60" cy="18" r="2.4" fill="#2c2c38" />
+        </g>
+      )}
       {cfg.glasses && (
         <g stroke="#5a6478" stroke-width="1.6" fill="none" opacity="0.9">
           <rect x="42.5" y="52" width="15" height="11.5" rx="5" />
