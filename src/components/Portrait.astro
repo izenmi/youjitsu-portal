@@ -9,7 +9,7 @@ interface Props {
 
 type Cfg = {
   gender: 'm' | 'f';
-  front: 'flat' | 'side' | 'curtain' | 'messy' | 'neat' | 'spiky' | 'slick' | 'hime' | 'none';
+  front: 'flat' | 'side' | 'curtain' | 'messy' | 'neat' | 'spiky' | 'slick' | 'hime' | 'buzz' | 'none';
   back: 'short-m' | 'mid' | 'bob' | 'long' | 'wavy' | 'ponytail' | 'twin' | 'buns' | 'mane' | 'none';
   hair: string;
   eyes: string;
@@ -21,6 +21,8 @@ type Cfg = {
   noBow?: boolean;   // 女子の襟リボンを外す(教師など)
   collar?: 'open';   // 男子: ネクタイなしの開襟(龍園・宝泉・石崎)
   skin?: string;     // 肌色の上書き(日焼け等)
+  sunglasses?: boolean; // サングラス(山田アルベルト)
+  hairband?: string; // カチューシャ/ヘアバンド(柴田)
 };
 
 const CONFIGS: Record<string, Cfg> = {
@@ -43,6 +45,10 @@ const CONFIGS: Record<string, Cfg> = {
   hosen: { gender: 'm', front: 'spiky', back: 'short-m', hair: '#96684a', eyes: '#7a4a3a', expr: 'fierce', collar: 'open', skin: '#f2c9a6' },
   yagami: { gender: 'm', front: 'neat', back: 'short-m', hair: '#94484a', eyes: '#7a4a44', expr: 'smile' },
   tsukishiro: { gender: 'm', front: 'neat', back: 'short-m', hair: '#8d8d97', eyes: '#5a5a6a', expr: 'smirk', jacket: '#565b66' },
+  shibata: { gender: 'm', front: 'messy', back: 'short-m', hair: '#c8b088', eyes: '#7a8ab0', expr: 'smile', hairband: '#f2f2ef' },
+  kaneda: { gender: 'm', front: 'hime', back: 'short-m', hair: '#cbb37a', eyes: '#8a7a50', expr: 'neutral', glasses: true },
+  albert: { gender: 'm', front: 'buzz', back: 'none', hair: '#2f2a28', eyes: '#3d3630', expr: 'fierce', skin: '#e0a87e', sunglasses: true },
+  mashima: { gender: 'm', front: 'neat', back: 'short-m', hair: '#6b5f4a', eyes: '#4a4a40', expr: 'neutral', jacket: '#3d4458' },
   // --- 女子 ---
   horikita: { gender: 'f', front: 'hime', back: 'bob', hair: '#2a2731', eyes: '#b0405c', expr: 'neutral' },
   karuizawa: { gender: 'f', front: 'side', back: 'ponytail', hair: '#e8b45e', eyes: '#4f7ad9', expr: 'smile', ribbon: '#d94f6d' },
@@ -65,6 +71,8 @@ const CONFIGS: Record<string, Cfg> = {
   nanase: { gender: 'f', front: 'hime', back: 'long', hair: '#e9dcae', eyes: '#a96a52', expr: 'neutral' },
   tsubaki: { gender: 'f', front: 'side', back: 'long', hair: '#e2d4ac', eyes: '#8d7c9c', expr: 'neutral' },
   hoshinomiya: { gender: 'f', front: 'side', back: 'wavy', hair: '#c7a276', eyes: '#b0685a', expr: 'smile', jacket: '#e5a8ba', noBow: true },
+  onodera: { gender: 'f', front: 'side', back: 'short-m', hair: '#a04b48', eyes: '#d99a3d', expr: 'smile' },
+  amikura: { gender: 'f', front: 'side', back: 'ponytail', hair: '#5a5f9c', eyes: '#7a7ad0', expr: 'smile', ribbon: '#f0f0f5' },
 };
 
 const CLASS_BG: Record<string, string> = {
@@ -252,6 +260,7 @@ const isM = cfg?.gender === 'm';
       {cfg.front === 'messy' && <path d="M37 50 Q34 25 60 25 Q86 25 83 50 L80 38 L74 45 L69 36 L63 45 L57 36 L51 45 L45 37 L40 48 Z" fill={cfg.hair} />}
       {cfg.front === 'neat' && <path d="M37 49 Q34 25 60 25 Q86 25 83 49 L80 36 Q66 45 49 41 Q42 39 39 47 Z" fill={cfg.hair} />}
       {cfg.front === 'spiky' && <path d="M37 52 L33 29 L44 39 L47 25 L55 37 L62 23 L68 37 L76 26 L78 40 L87 31 L83 52 L76 41 L68 48 L60 39 L52 48 L43 41 Z" fill={cfg.hair} />}
+      {cfg.front === 'buzz' && <path d="M38 44 Q38 24 60 24 Q82 24 82 44 Q82 31 60 30 Q38 31 38 44 Z" fill={cfg.hair} />}
       {cfg.front === 'slick' && (
         <>
           <path d="M36 46 Q33 21 60 21 Q87 21 84 46 Q80 31 60 31 Q40 31 36 46 Z" fill={cfg.hair} />
@@ -260,6 +269,14 @@ const isM = cfg?.gender === 'm';
       )}
 
       {/* 小物 */}
+      {cfg.hairband && <path d="M39 38 Q60 27 81 38" stroke={cfg.hairband} stroke-width="5" fill="none" stroke-linecap="round" />}
+      {cfg.sunglasses && (
+        <g fill="#23252e">
+          <rect x="42" y="53" width="16" height="10" rx="4" />
+          <rect x="62" y="53" width="16" height="10" rx="4" />
+          <path d="M57 56 L63 56 L63 58.5 L57 58.5 Z" />
+        </g>
+      )}
       {cfg.beret && (
         <g>
           <path d="M32 34 Q34 18 60 18 Q86 18 88 34 Q74 40 60 39 Q46 40 32 34 Z" fill="#2c2c38" />

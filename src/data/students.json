@@ -556,7 +556,7 @@
       "group": "main",
       "class": "D",
       "sp": 15,
-      "portrait": false,
+      "portrait": true,
       "oaa": {
         "academic": [
           "C",
@@ -707,12 +707,12 @@
     },
     {
       "id": "shibata",
-      "name": "柴田そう",
+      "name": "柴田颯",
       "kana": "しばた そう",
       "group": "main",
       "class": "B",
       "sp": 6,
-      "portrait": false,
+      "portrait": true,
       "oaa": {
         "academic": [
           "C",
@@ -740,7 +740,7 @@
       "group": "main",
       "class": "B",
       "sp": 6,
-      "portrait": false,
+      "portrait": true,
       "oaa": {
         "academic": [
           "C+",
@@ -867,12 +867,12 @@
     },
     {
       "id": "albert",
-      "name": "アルベルト・ヤマダ",
-      "kana": "あるべると やまだ",
+      "name": "山田アルベルト",
+      "kana": "やまだ あるべると",
       "group": "main",
       "class": "C",
       "sp": 2,
-      "portrait": false,
+      "portrait": true,
       "oaa": {
         "academic": [
           "C-",
@@ -928,7 +928,7 @@
       "group": "main",
       "class": "C",
       "sp": 8,
-      "portrait": false,
+      "portrait": true,
       "oaa": {
         "academic": [
           "B+",
@@ -1419,7 +1419,7 @@
       "group": "staff",
       "class": "A",
       "sp": 1,
-      "portrait": false,
+      "portrait": true,
       "oaa": null,
       "bio": "Aクラスの担任。厳格だが公平な人物で、学校の理念とルールの番人として振る舞う。茶柱とは同期。"
     },
