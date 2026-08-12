@@ -1,0 +1,93 @@
+---
+import Base from '../../layouts/Base.astro';
+import anime from '../../data/anime.json';
+---
+
+<Base title="アニメ⇔原作対応表" description="TVアニメ全4期と原作巻の対応表。アニメの続きはこの巻から。">
+  <h1>📺 アニメ⇔原作対応表</h1>
+  <p class="muted">
+    TVアニメ各期が原作のどこに対応するかをまとめました。
+    「この期まで見た」ボタンを押すと、サイト全体のネタバレ表示があなたの視聴位置に合わせて設定されます。
+  </p>
+
+  <section>
+    <h2 class="section-title">アニメの続きを読むなら</h2>
+    <div class="an-guide">
+      {anime.seasons.map((s) => (
+        <div class="card an-guide-row">
+          <span class="an-season-tag">{s.title}</span>
+          <span class="an-range muted">{s.novelRange}</span>
+          <span class="an-cont">→ 続きは<strong>{s.contLabel}</strong>から</span>
+          <button class="an-set primary-btn" data-ord={s.contOrd} data-name={s.title}>
+            この期まで見た
+          </button>
+        </div>
+      ))}
+    </div>
+    <p class="muted" style="font-size: 0.82rem;">
+      ✨ {anime.next_season}も発表済み。放送中の期の対応巻は暫定です。
+    </p>
+  </section>
+
+  {anime.seasons.map((s) => (
+    <section>
+      <h2 class="section-title">
+        {s.title}
+        <small class="muted">{s.year} / {s.count} / 原作: {s.novelRange}</small>
+        {'airing' in s && s.airing && <span class="an-airing">放送中</span>}
+      </h2>
+      <div class="card an-table-wrap">
+        <table class="an-table">
+          <thead><tr><th>話数</th><th>サブタイトル</th></tr></thead>
+          <tbody>
+            {s.episodes.map((e) => (
+              <tr><td class="an-num">第{e.num}話</td><td>{e.title}</td></tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </section>
+  ))}
+
+  <p class="muted" style="font-size: 0.78rem;">
+    出典: Wikipedia「ようこそ実力至上主義の教室へのアニメエピソード一覧」および TVアニメ公式サイト STORY ページ。
+  </p>
+
+  <script>
+    document.querySelectorAll<HTMLElement>('.an-set').forEach((b) => {
+      b.addEventListener('click', () => {
+        localStorage.setItem('anhs-progress', b.dataset.ord!);
+        location.reload();
+      });
+    });
+  </script>
+
+  <style>
+    .an-guide { display: grid; gap: 8px; }
+    .an-guide-row {
+      display: flex; align-items: center; gap: 14px; flex-wrap: wrap;
+      padding: 10px 16px;
+    }
+    .an-season-tag {
+      background: var(--navy); color: var(--navy-ink);
+      font-weight: 800; font-size: 0.8rem; border-radius: 999px; padding: 4px 12px;
+      min-width: 7.5em; text-align: center;
+    }
+    .an-range { font-size: 0.85rem; }
+    .an-cont { font-size: 0.95rem; }
+    .an-set { margin-left: auto; font-size: 0.8rem; padding: 6px 14px; }
+    .an-airing {
+      background: var(--accent); color: var(--accent-ink);
+      font-size: 0.7rem; font-weight: 800; border-radius: 999px; padding: 3px 10px;
+    }
+    .an-table-wrap { padding: 4px 8px; overflow-x: auto; }
+    .an-table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+    .an-table th {
+      text-align: left; font-size: 0.75rem; color: var(--ink-2);
+      padding: 8px 10px; border-bottom: 2px solid var(--line);
+    }
+    .an-table td { padding: 7px 10px; border-bottom: 1px solid var(--line); }
+    .an-table tr:last-child td { border-bottom: none; }
+    .an-num { white-space: nowrap; font-weight: 700; color: var(--accent); width: 5em; }
+  </style>
+</Base>
