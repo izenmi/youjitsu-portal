@@ -11,22 +11,37 @@ const { title, description = '「ようこそ実力至上主義の教室へ」�
 const pageTitle = title ? `${title} | 高育ポータル` : '高育ポータル - よう実ファンサイト';
 const base = import.meta.env.BASE_URL;
 
-const nav = [
-  { href: `${base}students/`, label: '生徒名鑑' },
-  { href: `${base}relations/`, label: '相関図' },
-  { href: `${base}timeline/`, label: '年表' },
-  { href: `${base}exams/`, label: '特別試験' },
-  { href: `${base}points/`, label: 'ポイント' },
-  { href: `${base}ranking/`, label: 'ランキング' },
-  { href: `${base}versus/`, label: 'VS比較' },
-  { href: `${base}quiz/`, label: 'クイズ' },
-  { href: `${base}shindan/`, label: '診断' },
-  { href: `${base}taiken/`, label: '試験体験' },
-  { href: `${base}jitsuryoku/`, label: '実力テスト' },
-  { href: `${base}anime/`, label: 'アニメ' },
-  { href: `${base}birthdays/`, label: '誕生日' },
-  { href: `${base}glossary/`, label: '用語集' },
-  { href: `${base}about/`, label: 'について' },
+const navGroups: { label: string; href?: string; items?: { href: string; label: string }[] }[] = [
+  { label: '生徒名鑑', href: `${base}students/` },
+  {
+    label: '物語データ',
+    items: [
+      { href: `${base}exams/`, label: '特別試験アーカイブ' },
+      { href: `${base}points/`, label: 'クラスポイント推移' },
+      { href: `${base}timeline/`, label: '統合年表' },
+      { href: `${base}anime/`, label: 'アニメ⇔原作対応表' },
+      { href: `${base}glossary/`, label: '用語集・図解' },
+    ],
+  },
+  {
+    label: '人物・分析',
+    items: [
+      { href: `${base}relations/`, label: '人物相関図' },
+      { href: `${base}ranking/`, label: 'OAAランキング' },
+      { href: `${base}versus/`, label: 'VS比較' },
+      { href: `${base}birthdays/`, label: '誕生日カレンダー' },
+    ],
+  },
+  {
+    label: '遊ぶ',
+    items: [
+      { href: `${base}quiz/`, label: '原作知識クイズ' },
+      { href: `${base}shindan/`, label: 'クラス適性診断' },
+      { href: `${base}taiken/`, label: '特別試験を体験' },
+      { href: `${base}jitsuryoku/`, label: '実力テスト' },
+    ],
+  },
+  { label: 'について', href: `${base}about/` },
 ];
 ---
 
@@ -59,7 +74,20 @@ const nav = [
           </span>
         </a>
         <nav class="site-nav" id="site-nav">
-          {nav.map((n) => <a href={n.href}>{n.label}</a>)}
+          {navGroups.map((g) =>
+            g.href ? (
+              <a class="nav-link" href={g.href}>{g.label}</a>
+            ) : (
+              <div class="nav-group">
+                <button class="nav-group-btn" type="button" aria-haspopup="true">
+                  {g.label} <span class="nav-caret">▾</span>
+                </button>
+                <div class="nav-dropdown">
+                  {g.items!.map((n) => <a href={n.href}>{n.label}</a>)}
+                </div>
+              </div>
+            )
+          )}
         </nav>
         <button id="sp-btn" class="sp-btn" type="button" title="ネタバレ表示範囲を変更">
           📖 <span id="sp-btn-label">未設定</span>
@@ -250,17 +278,50 @@ const nav = [
       .brand-text small { font-size: 0.68rem; opacity: 0.75; }
       .site-nav {
         display: flex;
-        gap: 2px;
-        flex-wrap: wrap;
+        gap: 4px;
+        align-items: center;
         margin-left: auto;
       }
-      .site-nav a {
+      .nav-link, .nav-group-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
         text-decoration: none;
-        padding: 5px 8px;
+        padding: 7px 12px;
         border-radius: 8px;
-        font-size: 0.84rem;
+        font-size: 0.92rem;
+        color: var(--navy-ink);
+        background: none;
+        border: none;
+        cursor: pointer;
+        font-family: inherit;
       }
-      .site-nav a:hover { background: rgb(255 255 255 / 0.12); }
+      .nav-link:hover, .nav-group:hover .nav-group-btn { background: rgb(255 255 255 / 0.12); }
+      .nav-caret { font-size: 0.7em; opacity: 0.7; }
+      .nav-group { position: relative; }
+      .nav-dropdown {
+        display: none;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        min-width: 13.5em;
+        background: var(--navy);
+        border: 1px solid rgb(255 255 255 / 0.16);
+        border-radius: 10px;
+        padding: 6px;
+        box-shadow: 0 14px 30px rgb(0 0 0 / 0.35);
+        z-index: 20;
+      }
+      .nav-group:hover .nav-dropdown, .nav-group:focus-within .nav-dropdown { display: block; }
+      .nav-dropdown a {
+        display: block;
+        text-decoration: none;
+        padding: 8px 12px;
+        border-radius: 8px;
+        font-size: 0.88rem;
+        white-space: nowrap;
+      }
+      .nav-dropdown a:hover { background: rgb(255 255 255 / 0.12); }
       .sp-btn {
         border: 1px solid rgb(255 255 255 / 0.3);
         background: rgb(255 255 255 / 0.08);
@@ -299,10 +360,36 @@ const nav = [
           max-height: calc(100vh - 70px);
           overflow-y: auto;
         }
-        .site-header.nav-open .site-nav a {
-          padding: 11px 10px;
+        .site-header.nav-open .site-nav { align-items: stretch; }
+        .site-header.nav-open .nav-link {
+          padding: 12px 10px;
+          font-size: 0.98rem;
+          border-bottom: 1px solid rgb(255 255 255 / 0.08);
+        }
+        .site-header.nav-open .nav-group { position: static; }
+        .site-header.nav-open .nav-group-btn {
+          width: 100%;
+          padding: 12px 10px 4px;
+          font-size: 0.74rem;
+          font-weight: 800;
+          letter-spacing: 0.08em;
+          opacity: 0.65;
+          pointer-events: none;
+        }
+        .site-header.nav-open .nav-caret { display: none; }
+        .site-header.nav-open .nav-dropdown {
+          display: block;
+          position: static;
+          background: none;
+          border: none;
+          box-shadow: none;
+          padding: 0 0 4px 8px;
+        }
+        .site-header.nav-open .nav-dropdown a {
+          padding: 10px 10px;
           font-size: 0.95rem;
           border-bottom: 1px solid rgb(255 255 255 / 0.08);
+          white-space: normal;
         }
       }
 
