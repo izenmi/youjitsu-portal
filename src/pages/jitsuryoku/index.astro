@@ -1,0 +1,370 @@
+---
+import Base from '../../layouts/Base.astro';
+---
+
+<Base title="実力テスト" description="4つのミニゲームであなたのOAAを実測。成績カードを画像で保存・シェアできます。">
+  <h1>💪 実力テスト</h1>
+  <p class="muted">
+    高度育成高等学校の入学試験を体験しましょう。4つのミニゲームであなたの
+    学力・身体能力・機転思考力・社会貢献性を「実測」し、OAA風の成績カードを発行します。
+  </p>
+
+  <div id="jt-start" class="card panel">
+    <h2>受験のご案内</h2>
+    <ol class="jt-guide">
+      <li>🧮 <strong>学力</strong> — 60秒間の暗算タイムアタック</li>
+      <li>⚡ <strong>身体能力</strong> — 反射神経テスト(5回)</li>
+      <li>🧠 <strong>機転思考力</strong> — 数字の瞬間記憶</li>
+      <li>🤝 <strong>社会貢献性</strong> — 適性アンケート(5問)</li>
+    </ol>
+    <p class="muted" style="font-size: 0.85rem;">所要時間は約3分。各種目はスキップもできます(スコア50扱い)。</p>
+    <button id="jt-begin" class="primary-btn">受験を開始する</button>
+  </div>
+
+  <!-- 学力 -->
+  <div id="jt-math" class="card panel" hidden>
+    <div class="jt-head"><h2>🧮 学力検査</h2><span id="jt-math-timer" class="jt-timer">60</span></div>
+    <p class="muted">制限時間内にできるだけ多く正解してください。</p>
+    <p id="jt-math-q" class="jt-question">--</p>
+    <input id="jt-math-in" type="number" inputmode="numeric" placeholder="答えを入力してEnter" autocomplete="off" />
+    <p class="jt-sub"><span id="jt-math-score">正解 0</span></p>
+    <button class="jt-skip" data-skip="math">この種目をスキップ</button>
+  </div>
+
+  <!-- 反射 -->
+  <div id="jt-reflex" class="card panel" hidden>
+    <div class="jt-head"><h2>⚡ 身体能力検査</h2><span id="jt-reflex-count" class="jt-timer">0/5</span></div>
+    <p class="muted">パネルが<strong style="color:#2e8b57">緑</strong>になった瞬間にタップ。赤のうちに押すとやり直しです。</p>
+    <button id="jt-reflex-pad" class="jt-pad">待機中…タップで開始</button>
+    <p class="jt-sub" id="jt-reflex-log"></p>
+    <button class="jt-skip" data-skip="reflex">この種目をスキップ</button>
+  </div>
+
+  <!-- 記憶 -->
+  <div id="jt-memory" class="card panel" hidden>
+    <div class="jt-head"><h2>🧠 機転思考力検査</h2><span id="jt-memory-level" class="jt-timer">3桁</span></div>
+    <p class="muted">一瞬だけ表示される数字を覚えて入力してください。桁数はどんどん増えます。</p>
+    <p id="jt-memory-show" class="jt-question">&nbsp;</p>
+    <input id="jt-memory-in" type="number" inputmode="numeric" placeholder="覚えた数字を入力してEnter" autocomplete="off" hidden />
+    <button id="jt-memory-next" class="primary-btn">表示する</button>
+    <button class="jt-skip" data-skip="memory">この種目をスキップ</button>
+  </div>
+
+  <!-- アンケート -->
+  <div id="jt-social" class="card panel" hidden>
+    <div class="jt-head"><h2>🤝 社会貢献性検査</h2><span id="jt-social-num" class="jt-timer">1/5</span></div>
+    <p id="jt-social-q" class="jt-question-s"></p>
+    <div id="jt-social-choices" class="choices"></div>
+  </div>
+
+  <!-- 結果 -->
+  <div id="jt-result" class="panel" hidden>
+    <div class="card oaa-result">
+      <span class="oaa-app-tag">OAA - 入学試験結果通知</span>
+      <div class="jt-name-row">
+        <label>受験者名(カードに印字・任意): <input id="jt-name" type="text" maxlength="12" placeholder="名無しの受験生" /></label>
+      </div>
+      <canvas id="jt-canvas" width="700" height="440"></canvas>
+      <div class="end-actions" style="margin-top: 12px;">
+        <a id="jt-download" class="primary-btn" download="oaa-card.png" style="text-decoration:none;">📥 カードを画像で保存</a>
+        <a id="jt-share" class="share-btn" target="_blank" rel="noopener">Xでシェア</a>
+        <button id="jt-retry" class="share-btn">もう一度受験する</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const $ = (id: string) => document.getElementById(id)!;
+    const scores: Record<string, number> = { math: 50, reflex: 50, memory: 50, social: 50 };
+    const order = ['math', 'reflex', 'memory', 'social'];
+    let stage = -1;
+    let cleanup: (() => void) | null = null;
+
+    const gradeOf = (v: number) =>
+      v >= 95 ? 'A+' : v >= 88 ? 'A' : v >= 80 ? 'A-' : v >= 72 ? 'B+' : v >= 64 ? 'B' : v >= 56 ? 'B-'
+      : v >= 48 ? 'C+' : v >= 40 ? 'C' : v >= 30 ? 'C-' : v >= 20 ? 'D+' : v >= 10 ? 'D' : 'E';
+
+    const showPanel = (id: string) => {
+      ['jt-start', 'jt-math', 'jt-reflex', 'jt-memory', 'jt-social', 'jt-result'].forEach(
+        (p) => ($(p).hidden = p !== id)
+      );
+    };
+
+    const next = () => {
+      if (cleanup) { cleanup(); cleanup = null; }
+      stage++;
+      if (stage >= order.length) { showResult(); return; }
+      const g = order[stage];
+      showPanel(`jt-${g}`);
+      if (g === 'math') startMath();
+      else if (g === 'reflex') startReflex();
+      else if (g === 'memory') startMemory();
+      else startSocial();
+    };
+
+    document.querySelectorAll<HTMLElement>('.jt-skip').forEach((b) =>
+      b.addEventListener('click', () => { scores[b.dataset.skip!] = 50; next(); })
+    );
+
+    // ---- 学力: 計算タイムアタック ----
+    function startMath() {
+      let t = 60, ok = 0, answer = 0;
+      const input = $('jt-math-in') as HTMLInputElement;
+      const gen = () => {
+        const kind = Math.floor(Math.random() * 3);
+        let a: number, b: number, text: string;
+        if (kind === 0) { a = 10 + Math.floor(Math.random() * 80); b = 10 + Math.floor(Math.random() * 80); answer = a + b; text = `${a} + ${b}`; }
+        else if (kind === 1) { a = 30 + Math.floor(Math.random() * 60); b = 10 + Math.floor(Math.random() * (a - 9)); answer = a - b; text = `${a} − ${b}`; }
+        else { a = 11 + Math.floor(Math.random() * 79); b = 2 + Math.floor(Math.random() * 8); answer = a * b; text = `${a} × ${b}`; }
+        $('jt-math-q').textContent = `${text} = ?`;
+        input.value = '';
+      };
+      const timer = setInterval(() => {
+        t--;
+        $('jt-math-timer').textContent = String(t);
+        if (t <= 0) { scores.math = Math.min(100, Math.round((ok / 20) * 100)); next(); }
+      }, 1000);
+      const onKey = (ev: KeyboardEvent) => {
+        if (ev.key !== 'Enter') return;
+        if (Number(input.value) === answer) { ok++; $('jt-math-score').textContent = `正解 ${ok}`; }
+        gen();
+      };
+      input.addEventListener('keydown', onKey);
+      cleanup = () => { clearInterval(timer); input.removeEventListener('keydown', onKey); };
+      gen();
+      input.focus();
+    }
+
+    // ---- 身体能力: 反射神経 ----
+    function startReflex() {
+      const pad = $('jt-reflex-pad');
+      const times: number[] = [];
+      let state: 'idle' | 'wait' | 'go' = 'idle';
+      let t0 = 0, timeout = 0;
+      const arm = () => {
+        state = 'wait';
+        pad.className = 'jt-pad jt-pad-wait';
+        pad.textContent = '赤の間は待つ…';
+        timeout = window.setTimeout(() => {
+          state = 'go';
+          pad.className = 'jt-pad jt-pad-go';
+          pad.textContent = '今だ!タップ!';
+          t0 = performance.now();
+        }, 800 + Math.random() * 2200);
+      };
+      const onClick = () => {
+        if (state === 'idle') { arm(); return; }
+        if (state === 'wait') {
+          clearTimeout(timeout);
+          pad.className = 'jt-pad';
+          pad.textContent = 'フライング!タップで再開';
+          state = 'idle';
+          return;
+        }
+        const ms = Math.round(performance.now() - t0);
+        times.push(ms);
+        $('jt-reflex-count').textContent = `${times.length}/5`;
+        $('jt-reflex-log').textContent = times.map((x) => `${x}ms`).join(' / ');
+        if (times.length >= 5) {
+          const avg = times.reduce((a, b) => a + b, 0) / times.length;
+          scores.reflex = Math.max(5, Math.min(100, Math.round(100 - (avg - 200) * (80 / 300))));
+          next();
+        } else {
+          state = 'idle';
+          pad.className = 'jt-pad';
+          pad.textContent = 'タップで次へ';
+        }
+      };
+      pad.addEventListener('click', onClick);
+      pad.className = 'jt-pad';
+      pad.textContent = '待機中…タップで開始';
+      cleanup = () => { clearTimeout(timeout); pad.removeEventListener('click', onClick); };
+    }
+
+    // ---- 機転: 数字記憶 ----
+    function startMemory() {
+      let digits = 3, best = 0, current = '';
+      const show = $('jt-memory-show');
+      const input = $('jt-memory-in') as HTMLInputElement;
+      const btn = $('jt-memory-next');
+      const round = () => {
+        $('jt-memory-level').textContent = `${digits}桁`;
+        current = Array.from({ length: digits }, () => Math.floor(Math.random() * 10)).join('');
+        if (current[0] === '0') current = '1' + current.slice(1);
+        show.textContent = current;
+        btn.hidden = true;
+        input.hidden = true;
+        setTimeout(() => {
+          show.textContent = '?'.repeat(digits);
+          input.hidden = false;
+          input.value = '';
+          input.focus();
+        }, 350 + digits * 220);
+      };
+      const onKey = (ev: KeyboardEvent) => {
+        if (ev.key !== 'Enter' || input.hidden) return;
+        if (input.value === current) { best = digits; digits++; round(); }
+        else {
+          scores.memory = Math.max(5, Math.min(100, Math.round(((best - 2) / 7) * 100)));
+          next();
+        }
+      };
+      const onBtn = () => round();
+      btn.addEventListener('click', onBtn);
+      input.addEventListener('keydown', onKey);
+      btn.hidden = false;
+      btn.textContent = '表示する';
+      show.textContent = ' ';
+      cleanup = () => { btn.removeEventListener('click', onBtn); input.removeEventListener('keydown', onKey); };
+    }
+
+    // ---- 社会貢献性: アンケート ----
+    const SOCIAL_QS: [string, [string, number][]][] = [
+      ['困っているクラスメイトを見かけたら?', [['迷わず声をかける', 100], ['様子を見てから声をかける', 70], ['頼まれたら手伝う', 45], ['関わらない', 15]]],
+      ['クラスの行事の役割決めでは?', [['まとめ役に立候補する', 100], ['頼まれた役は引き受ける', 70], ['目立たない役を選ぶ', 45], ['できるだけ逃げる', 15]]],
+      ['意見が対立したとき、あなたは?', [['双方の妥協点を探す', 100], ['まず相手の話を全部聞く', 75], ['自分の意見を通す', 40], ['議論から離脱する', 20]]],
+      ['約束やルールについて?', [['多少損でも必ず守る', 95], ['基本は守る', 70], ['状況次第で柔軟に', 45], ['縛られたくない', 20]]],
+      ['クラスの誰かが成功したら?', [['自分のことのように喜ぶ', 95], ['素直に称賛する', 75], ['少し悔しい', 50], ['興味がない', 20]]],
+    ];
+    function startSocial() {
+      let i = 0; const vals: number[] = [];
+      const render = () => {
+        $('jt-social-num').textContent = `${i + 1}/5`;
+        $('jt-social-q').textContent = SOCIAL_QS[i][0];
+        const box = $('jt-social-choices');
+        box.innerHTML = '';
+        SOCIAL_QS[i][1].forEach(([t, v]) => {
+          const b = document.createElement('button');
+          b.className = 'choice-btn';
+          b.textContent = t;
+          b.addEventListener('click', () => {
+            vals.push(v);
+            i++;
+            if (i < SOCIAL_QS.length) render();
+            else { scores.social = Math.round(vals.reduce((a, c) => a + c, 0) / vals.length); next(); }
+          });
+          box.appendChild(b);
+        });
+      };
+      render();
+    }
+
+    // ---- 結果カード ----
+    const AXIS_LABELS: [string, string][] = [
+      ['math', '学力'], ['reflex', '身体能力'], ['memory', '機転思考力'], ['social', '社会貢献性'],
+    ];
+    function drawCard() {
+      const canvas = $('jt-canvas') as HTMLCanvasElement;
+      const ctx = canvas.getContext('2d')!;
+      const name = ($('jt-name') as HTMLInputElement).value.trim() || '名無しの受験生';
+      const total = Math.round(order.reduce((a, k) => a + scores[k], 0) / 4);
+      // 背景
+      ctx.fillStyle = '#1b2a4a';
+      ctx.fillRect(0, 0, 700, 440);
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect(14, 14, 672, 412);
+      // ヘッダー
+      ctx.fillStyle = '#b3223c';
+      ctx.fillRect(14, 14, 672, 64);
+      ctx.fillStyle = '#ffffff';
+      ctx.font = 'bold 26px sans-serif';
+      ctx.fillText('OAA 入学試験 成績通知書', 36, 55);
+      ctx.font = '13px sans-serif';
+      ctx.fillText('高度育成高等学校 学内ポータル(非公式)', 440, 55);
+      // 名前
+      ctx.fillStyle = '#1b2a4a';
+      ctx.font = 'bold 24px sans-serif';
+      ctx.fillText(`${name} 殿`, 36, 118);
+      ctx.strokeStyle = '#d4dae4';
+      ctx.beginPath(); ctx.moveTo(36, 130); ctx.lineTo(664, 130); ctx.stroke();
+      // 各能力バー
+      AXIS_LABELS.forEach(([key, label], i) => {
+        const y = 168 + i * 52;
+        const v = scores[key];
+        ctx.fillStyle = '#52617e';
+        ctx.font = 'bold 17px sans-serif';
+        ctx.fillText(label, 36, y + 6);
+        ctx.fillStyle = '#e9edf3';
+        ctx.fillRect(160, y - 10, 360, 20);
+        ctx.fillStyle = '#b3223c';
+        ctx.fillRect(160, y - 10, 360 * (v / 100), 20);
+        ctx.fillStyle = '#1b2a4a';
+        ctx.font = 'bold 20px sans-serif';
+        ctx.fillText(`${gradeOf(v)}`, 545, y + 7);
+        ctx.font = '14px sans-serif';
+        ctx.fillStyle = '#52617e';
+        ctx.fillText(`(${v})`, 590, y + 6);
+      });
+      // 総合
+      ctx.fillStyle = '#1b2a4a';
+      ctx.fillRect(36, 372, 628, 2);
+      ctx.font = 'bold 22px sans-serif';
+      ctx.fillText('総合評価', 36, 410);
+      ctx.fillStyle = '#b3223c';
+      ctx.font = 'bold 34px sans-serif';
+      ctx.fillText(`${gradeOf(total)} (${total})`, 160, 412);
+      ctx.fillStyle = '#8a94a3';
+      ctx.font = '13px sans-serif';
+      ctx.fillText(judge(total), 320, 408);
+      // ダウンロードリンク更新
+      ($('jt-download') as HTMLAnchorElement).href = canvas.toDataURL('image/png');
+    }
+    const judge = (t: number) =>
+      t >= 85 ? 'Aクラス入学確実。ホワイトルーム級の逸材です。'
+      : t >= 70 ? 'Bクラス相当。十分に上位を狙える実力です。'
+      : t >= 55 ? 'Cクラス相当。伸びしろに期待しましょう。'
+      : 'Dクラス配属。ここから成り上がるのが主人公です。';
+
+    function showResult() {
+      showPanel('jt-result');
+      drawCard();
+      const total = Math.round(order.reduce((a, k) => a + scores[k], 0) / 4);
+      const text = `高育の実力テストを受験した結果…総合評価${gradeOf(total)}(${total})でした! あなたは何クラス? #よう実 #高育ポータル`;
+      ($('jt-share') as HTMLAnchorElement).href =
+        `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(location.href)}`;
+    }
+
+    $('jt-name').addEventListener('input', drawCard);
+    $('jt-begin').addEventListener('click', () => { stage = -1; next(); });
+    $('jt-retry').addEventListener('click', () => { stage = -1; order.forEach((k) => (scores[k] = 50)); showPanel('jt-start'); });
+  </script>
+
+  <style is:global>
+    .jt-guide { line-height: 2.1; padding-left: 1.4em; }
+    .jt-head { display: flex; justify-content: space-between; align-items: center; }
+    .jt-head h2 { margin: 0; font-size: 1.1rem; }
+    .jt-timer {
+      font-weight: 800; font-size: 1.2rem; color: var(--accent);
+      background: var(--accent-soft); border-radius: 8px; padding: 2px 12px;
+    }
+    .jt-question { font-size: 2rem; font-weight: 800; text-align: center; letter-spacing: 0.1em; margin: 18px 0 10px; }
+    .jt-question-s { font-size: 1.05rem; font-weight: 700; }
+    #jt-math-in, #jt-memory-in {
+      display: block; width: 100%; max-width: 300px; margin: 0 auto;
+      padding: 10px 14px; font-size: 1.2rem; text-align: center;
+      border: 2px solid var(--line); border-radius: 10px;
+      background: var(--surface); color: var(--ink);
+    }
+    .jt-sub { text-align: center; color: var(--ink-2); font-size: 0.9rem; min-height: 1.4em; }
+    .jt-skip {
+      display: block; margin: 14px auto 0; background: none; border: none;
+      color: var(--ink-2); font-size: 0.78rem; text-decoration: underline; cursor: pointer;
+    }
+    .jt-pad {
+      display: block; width: 100%; height: 180px; border: none; border-radius: 12px;
+      background: var(--surface-2); color: var(--ink); font-size: 1.3rem; font-weight: 800;
+      cursor: pointer; margin: 10px 0;
+    }
+    .jt-pad-wait { background: #c22843; color: #fff; }
+    .jt-pad-go { background: #2e8b57; color: #fff; }
+    .jt-name-row { margin: 10px 0; font-size: 0.88rem; }
+    .jt-name-row input {
+      padding: 6px 10px; border: 1px solid var(--line); border-radius: 8px;
+      background: var(--surface); color: var(--ink);
+    }
+    #jt-canvas {
+      display: block; width: 100%; max-width: 700px; height: auto;
+      border: 1px solid var(--line); border-radius: 8px;
+    }
+  </style>
+</Base>
