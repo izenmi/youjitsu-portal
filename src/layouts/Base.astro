@@ -40,6 +40,9 @@ const nav = [
     <meta property="og:description" content={description} />
     <meta property="og:type" content="website" />
     <link rel="icon" type="image/svg+xml" href={`${base}favicon.svg`} />
+    <link rel="manifest" href={`${base}manifest.webmanifest`} />
+    <link rel="apple-touch-icon" href={`${base}icons/apple-touch-icon.png`} />
+    <meta name="theme-color" content="#1b2a4a" />
     <script is:inline>
       // ネタバレ処理が終わるまで sp 対象を隠す(フラッシュ防止)
       document.documentElement.classList.add('sp-pending');
@@ -55,11 +58,14 @@ const nav = [
             <small>ようこそ実力至上主義の教室へ 非公式ファンサイト</small>
           </span>
         </a>
-        <nav class="site-nav">
+        <nav class="site-nav" id="site-nav">
           {nav.map((n) => <a href={n.href}>{n.label}</a>)}
         </nav>
         <button id="sp-btn" class="sp-btn" type="button" title="ネタバレ表示範囲を変更">
           📖 <span id="sp-btn-label">未設定</span>
+        </button>
+        <button id="nav-toggle" class="nav-toggle" type="button" aria-expanded="false" aria-controls="site-nav" aria-label="メニュー">
+          ☰
         </button>
       </div>
     </header>
@@ -180,6 +186,25 @@ const nav = [
           window.addEventListener('DOMContentLoaded', () => dialog.showModal());
         }
         window.addEventListener('DOMContentLoaded', apply);
+
+        // モバイルメニュー
+        const header = document.querySelector('.site-header');
+        const navToggle = document.getElementById('nav-toggle');
+        navToggle.addEventListener('click', () => {
+          const open = header.classList.toggle('nav-open');
+          navToggle.setAttribute('aria-expanded', String(open));
+          navToggle.textContent = open ? '✕' : '☰';
+        });
+        document.querySelectorAll('.site-nav a').forEach((a) =>
+          a.addEventListener('click', () => header.classList.remove('nav-open'))
+        );
+
+        // PWA
+        if ('serviceWorker' in navigator) {
+          window.addEventListener('load', () => {
+            navigator.serviceWorker.register(document.querySelector('link[rel=manifest]').href.replace('manifest.webmanifest', 'sw.js')).catch(() => {});
+          });
+        }
       })();
     </script>
 
@@ -246,6 +271,40 @@ const nav = [
         cursor: pointer;
       }
       .sp-btn:hover { background: rgb(255 255 255 / 0.16); }
+      .nav-toggle {
+        display: none;
+        border: 1px solid rgb(255 255 255 / 0.3);
+        background: rgb(255 255 255 / 0.08);
+        color: var(--navy-ink);
+        border-radius: 8px;
+        padding: 4px 11px;
+        font-size: 1.05rem;
+        cursor: pointer;
+      }
+      @media (max-width: 900px) {
+        .nav-toggle { display: inline-block; }
+        .site-nav { display: none; }
+        .site-header.nav-open .site-nav {
+          display: flex;
+          flex-direction: column;
+          gap: 0;
+          position: absolute;
+          top: 100%;
+          left: 0;
+          right: 0;
+          background: var(--navy);
+          border-top: 1px solid rgb(255 255 255 / 0.15);
+          box-shadow: 0 12px 24px rgb(0 0 0 / 0.35);
+          padding: 6px 12px 14px;
+          max-height: calc(100vh - 70px);
+          overflow-y: auto;
+        }
+        .site-header.nav-open .site-nav a {
+          padding: 11px 10px;
+          font-size: 0.95rem;
+          border-bottom: 1px solid rgb(255 255 255 / 0.08);
+        }
+      }
 
       main.container { padding-top: 20px; padding-bottom: 48px; min-height: 60vh; }
 
